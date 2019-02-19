@@ -14,6 +14,7 @@ import java.util.List;
 
 import com.egroupai.engine.entity.Face;
 import com.egroupai.engine.util.CopyUtil;
+import com.example.entity.Member;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
@@ -30,12 +31,17 @@ import java.sql.*;
 public class GetResult {
 	static protected String ENGINEPATH = "C:\\eGroupAI_FaceEngine_v3.1.0";
 	
-	public static void main(String args[]) throws SQLException{
+	public static Member main() throws SQLException{
+		
+		Member member = new Member();
+		
 		List<Face> faceList = new ArrayList<>();
-		String name = "";
-		String faceId = "";
-		String phone = "";
+		long faceId = 0;
+		long memberId = 0;
+		String phonenumber = "";
 		String email = "";
+		String name = "";
+		Date birth = new Date();
 		Date date = new Date();
 	    SimpleDateFormat todaydate = new SimpleDateFormat("yyyy-MM-dd");
 	    String today = todaydate.format(date);
@@ -43,6 +49,7 @@ public class GetResult {
 		Integer startIndex = 0;
 		String jsonName = "output."+today+".egroup";	// Get All Retrieve Data
 		ArrayList<String> foundlist = new ArrayList<>();
+		
 		while(true) {
 			long startTime = System.currentTimeMillis();
 			faceList = getAllResult(ENGINEPATH,jsonName ,startIndex);
@@ -54,7 +61,7 @@ public class GetResult {
 			// If your fps is 10, means recognize 10 frame per seconds, 1000 ms /10 frame = 100 ms
 			
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -69,62 +76,57 @@ public class GetResult {
 				name = jo.get("personId").getAsString();
 				if(!foundlist.contains(name)) {
 					foundlist.add(name);
+					if(foundlist.size() > 1) {
+						 member.setMemberId((long) -1);
+						 return member;
+					}
 				}
 				System.out.println("辨識成功 ! 辨識到: "+name);
 			}else if(found == 0) {
 				System.out.println("辨識失敗，請再試一次");
 			}
 			}
-			for (int j = 0; j <= foundlist.size()-1; j++) {
-				System.out.println("名單"+(j+1)+"號: "+foundlist.get(j));
-			}
 			break;
 		}
 		
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
-			System.out.println("加载数据库驱动成功");
-			String url="jdbc:mysql://localhost:3306/project?autoReconnect=true&useSSL=false&serverTimezone=UTC";//声明数据库project的url  
-			String user="root";//数据库账号  
-			String pass="a8s5d1f9";//数据库密码
-			//建立数据库连接，获得连接对象conn  
+			System.out.println("加載資料庫驅動");
+			String url="jdbc:mysql://localhost:3306/project?autoReconnect=true&useSSL=false&serverTimezone=UTC";//聲明資料庫project的url  
+			String user="root";//資料庫帳號
+			String pass="a8s5d1f9";//資料庫密碼
+			//建立資料庫連結，獲得連結對象conn  
 			Connection connect=DriverManager.getConnection(url,user,pass);
-			System.out.println("数据库连接成功");
+			System.out.println("資料庫連接成功");
 			Statement stmt = connect.createStatement();
-			for (int i = 0; i <= foundlist.size()-1; i++) {
-			ResultSet rs = stmt.executeQuery("SELECT * FROM `face` WHERE `name` LIKE '"+foundlist.get(i)+"'");
+
+			ResultSet rs = stmt.executeQuery("SELECT * FROM `face` WHERE `name` LIKE '"+foundlist.get(0)+"'");
 				while (rs.next()) {
-					faceId = rs.getString("faceId");
+					faceId = rs.getInt("faceId");
 				}
 			ResultSet rs2 = stmt.executeQuery("SELECT * FROM `member` WHERE `faceId` LIKE '"+faceId+"'");
 			while (rs2.next()) {
-					phone = rs2.getString("phone");
+					memberId = rs2.getLong("memberId");
+					phonenumber = rs2.getString("phone");
 					email = rs2.getString("email");
+					birth = rs2.getDate("birth");
 				}
-			System.out.println("會員名字 : "+foundlist.get(i)+", faceid為 :  "+faceId+", 電話號碼為 : "+phone+", email為 : "+email);
-			}
+			System.out.println("會員名字 : "+foundlist.get(0)+", faceid為 :  "+faceId+", 電話為 : " + phonenumber + ", email為 : " + email + ", birth為:" + birth);
+			
+			//存到member
+			member.setMemberId(memberId);
+			member.setFaceId((long) faceId);
+			member.setEmail(email);
+			member.setPhone(phonenumber);
+			member.setBirth(birth);
+			
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			System.out.print("get data error!");
 			e.printStackTrace();
 		}
 		// Stop by yourself
-		
-		//Get Real-time data
-//		String cacheJsonName = "output.cache.egroup";	// Get Real-time data
-//		while(true) {
-//			long startTime = System.currentTimeMillis();
-//			faceList = getCacheResult(ENGINEPATH,cacheJsonName);
-//			System.out.println("Get Json Using Time:" + (System.currentTimeMillis() - startTime) + " ms,faceList="+new Gson().toJson(faceList));
-//			// If your fps is 10, means recognize 10 frame per seconds, 1000 ms /10 frame = 100 ms
-//			try {
-//				Thread.sleep(300);
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		}
-		// Stop by yourself
+		return member;
 	}
 		
 	
@@ -214,63 +216,4 @@ public class GetResult {
 	 * @param startIndex
 	 * @return
 	 */
-	public static List<Face> getCacheResult(String jsonPath,String jsonName) {
-		// init func
-		final Gson gson = new Gson();
-		final CopyUtil copyUtil = new CopyUtil();
-
-		// init variable
-		final Type faceListType = new TypeToken<ArrayList<Face>>() {}.getType();
-		List<Face> faceList = new ArrayList<Face>();
-
-		// Get retrieve result
-		final File sourceJson = new File(jsonPath.toString() + "/"+jsonName+".json");
-		final StringBuilder jsonFileName = new StringBuilder(jsonPath + "/"+jsonName+"_copy.json");
-		final File destJson = new File(jsonFileName.toString());
-		if(sourceJson.exists()&&sourceJson.length()!=destJson.length()) {
-			try {
-				copyUtil.copyFile(sourceJson, destJson);
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			final File jsonFile = new File(jsonFileName.toString());
-			FileReader fileReader = null;
-			BufferedReader bufferedReader = null;
-
-			// If json exists
-			if (jsonFile.exists()) {
-				try {
-					fileReader = new FileReader(jsonFileName.toString());
-				} catch (FileNotFoundException e) {
-				}
-				bufferedReader = new BufferedReader(fileReader);
-				// Read Json
-				final StringBuilder jsonContent = new StringBuilder();
-				String line;
-				try {
-					// Read line
-					line = bufferedReader.readLine();
-					while (line != null) {
-						jsonContent.append(line + "\n");
-						line = bufferedReader.readLine();
-					}
-					// If has data
-					if (jsonContent.toString() != null) {
-						// Get last one object
-						final int endIndex = jsonContent.lastIndexOf("}\n\t,");
-						final String json = jsonContent.toString().substring(0, endIndex) + "}]";
-						faceList = gson.fromJson(json, faceListType);						
-					}
-				} catch (IOException e) {
-				} finally {
-					try {
-						bufferedReader.close();
-					} catch (IOException e) {
-					}
-				}
-			}
-		}		
-		return faceList;
-	}
 }

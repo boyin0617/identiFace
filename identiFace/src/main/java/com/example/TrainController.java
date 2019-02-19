@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.springframework.stereotype.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.egroupai.engine.entity.ModelMerge;
 import com.egroupai.engine.entity.ModelSwitch;
@@ -23,7 +24,15 @@ import com.egroupai.engine.util.TxtUtil;
 
 @Controller
 public class TrainController {
-	@RequestMapping("/trainface")
+	@PostMapping("/trainface")
+    public ModelAndView TrainForm(@ModelAttribute("name") String name) {
+	       ModelAndView model = new ModelAndView("main");
+
+	       model.addObject("name", name);
+
+	       return model;
+
+	    }
     @ResponseBody
     	void home() throws SQLException {
 		// TODO Auto-generated method stub

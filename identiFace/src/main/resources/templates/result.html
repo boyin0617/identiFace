@@ -1,0 +1,18 @@
+<table th:object="${member}">
+    <tr>
+        <td>memberId</td>
+        <td>name</td>
+        <td>phonenumber</td>
+        <td>email</td>
+        <td>birth</td>
+    </tr>
+    <tr>
+        <td th:text="*{memberId}">memberId</td>
+        <td th:text="${name}">name</td>
+        <td th:text="*{phone}">phonenumber</td>
+        <td th:text="*{email}">email</td>
+        <td th:text="*{birth}">birth</td>
+    </tr>
+</table>
+<p th:text="'辨識到: ' + ${nameGet}">沒有辨識到</p>
+<button onclick="history.back()">返回</button>

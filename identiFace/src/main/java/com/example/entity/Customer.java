@@ -11,17 +11,17 @@ import javax.persistence.Table;
 public class Customer {
  @Id
  @GeneratedValue(strategy = GenerationType.IDENTITY)
- private int id;
+ private Long faceid;
 
  private String name;
- private String phonenumber;
+ private String gender;
  private int age;
 
- public int getId() {
-  return id;
+ public Long getFaceId() {
+  return faceid;
 }
-public void setId(int id) {
- this.id = id;
+public void setFaceId(Long faceid) {
+ this.faceid = faceid;
 }
 
 public String getName() {
@@ -31,11 +31,11 @@ public String getName() {
   this.name = name;
  }
 
- public String getPhonenumber() {
-  return phonenumber;
+ public String getGender() {
+  return gender;
  }
- public void setAddress(String phonenumber) {
-  this.phonenumber = phonenumber;
+ public void setGender(String gender) {
+  this.gender = gender;
  }
 
  public int getAge() {
