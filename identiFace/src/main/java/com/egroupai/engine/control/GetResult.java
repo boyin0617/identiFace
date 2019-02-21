@@ -31,9 +31,10 @@ import java.sql.*;
 public class GetResult {
 	static protected String ENGINEPATH = "C:\\eGroupAI_FaceEngine_v3.1.0";
 	
-	public static Member main() throws SQLException{
+	public static List<Member> main() throws SQLException{
 		
 		Member member = new Member();
+		List<Member> memberlist = new ArrayList<>();
 		
 		List<Face> faceList = new ArrayList<>();
 		long faceId = 0;
@@ -76,10 +77,12 @@ public class GetResult {
 				name = jo.get("personId").getAsString();
 				if(!foundlist.contains(name)) {
 					foundlist.add(name);
-					if(foundlist.size() > 1) {
-						 member.setMemberId((long) -1);
-						 return member;
-					}
+//					if(foundlist.size() > 1) {
+//						 member.setMemberId((long) (-1));
+//						 System.out.println("辨識到"+foundlist.size()+"人，請再試一次");
+//						 System.out.println("memberId為"+member.getMemberId());
+//						 return member;
+//					}
 				}
 				System.out.println("辨識成功 ! 辨識到: "+name);
 			}else if(found == 0) {
@@ -88,7 +91,11 @@ public class GetResult {
 			}
 			break;
 		}
-		
+		if(foundlist.size() == 0) {
+			member.setFaceId((long) 0);
+			System.out.println("沒有辨識到，請再試一次");
+			return memberlist;
+		}
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			System.out.println("加載資料庫驅動");
@@ -99,34 +106,42 @@ public class GetResult {
 			Connection connect=DriverManager.getConnection(url,user,pass);
 			System.out.println("資料庫連接成功");
 			Statement stmt = connect.createStatement();
-
-			ResultSet rs = stmt.executeQuery("SELECT * FROM `face` WHERE `name` LIKE '"+foundlist.get(0)+"'");
+			for(int i = 0;i < foundlist.size();i++) {
+			ResultSet rs = stmt.executeQuery("SELECT * FROM `face` WHERE `name` LIKE '"+foundlist.get(i)+"'");
 				while (rs.next()) {
 					faceId = rs.getInt("faceId");
 				}
 			ResultSet rs2 = stmt.executeQuery("SELECT * FROM `member` WHERE `faceId` LIKE '"+faceId+"'");
 			while (rs2.next()) {
+					
 					memberId = rs2.getLong("memberId");
 					phonenumber = rs2.getString("phone");
+					name = rs2.getString("name");
 					email = rs2.getString("email");
 					birth = rs2.getDate("birth");
 				}
-			System.out.println("會員名字 : "+foundlist.get(0)+", faceid為 :  "+faceId+", 電話為 : " + phonenumber + ", email為 : " + email + ", birth為:" + birth);
-			
+			System.out.println("會員名字 : "+foundlist.get(i)+", 資料庫名字為"+name+", faceid為 :  "+faceId+", 電話為 : " + phonenumber + ", email為 : " + email + ", birth為:" + birth);
+			member = new Member();
 			//存到member
-			member.setMemberId(memberId);
+			member.setMemberId((long) memberId);
 			member.setFaceId((long) faceId);
+			member.setName(name);
 			member.setEmail(email);
 			member.setPhone(phonenumber);
 			member.setBirth(birth);
-			
+			System.out.println("資料庫名字為"+member.getName()+", faceid為 :  "+member.getFaceId()+", 電話為 : " + member.getPhone() + ", email為 : " + member.getEmail() + ", birth為:" + member.getBirth());
+			memberlist.add(member);
+			}
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			System.out.print("get data error!");
 			e.printStackTrace();
 		}
+		for(int i = 0;i < memberlist.size();i++) {
+		System.out.println("第"+i+"個,名字 :"+memberlist.get(i).getName()+", faceid :"+memberlist.get(i).getFaceId()+", email :"+memberlist.get(i).getEmail());
+		}
 		// Stop by yourself
-		return member;
+		return memberlist;
 	}
 		
 	

@@ -32,9 +32,8 @@ public class RetrieveController {
 	public ModelAndView home() throws SQLException {
 		
 		ModelAndView model = new ModelAndView("result");
-		Member member = new Member();
+		List<Member> memberlist = new ArrayList();
 		String name = "";
-		
 		String ENGINEPATH = "C:\\eGroupAI_FaceEngine_v3.1.0";
 		// RetrieveFace
 		RetrieveFace retrieveFace = new RetrieveFace();
@@ -52,30 +51,41 @@ public class RetrieveController {
 		retrieveFace.setJsonPath("output");
 		retrieveFace(retrieveFace);
 		
-		member = GetResult.main();
-		model.addObject("member", member);
+		memberlist = GetResult.main();
+       	
+//		if(memberlist.get(i).getMemberId() == -1) {
+//			model.addObject("error", "辨識到多人，請再試一次");
+//			return model;
+//		}
+//		else if(member == null) {
+//			model.addObject("error", "辨識失敗，請再試一次");
+//			return model;
+//		}
+		model.addObject("members", memberlist);
 		//找資料庫
-		try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			System.out.println("加载数据库驱动成功");
-			String url = "jdbc:mysql://localhost:3306/project?useSSL=false&serverTimezone=UTC";// 声明数据库project的url
-			String user = "root";// 数据库账号
-			String pass = "a8s5d1f9";// 数据库密码
-			// 建立数据库连接，获得连接对象conn
-			Connection connect = DriverManager.getConnection(url, user, pass);
-			System.out.println("資料庫連接成功");
-			Statement stmt = connect.createStatement();
-			ResultSet rs = stmt.executeQuery("select * from face WHERE faceId = "+member.getFaceId());
-			while (rs.next()) {
-				name = rs.getString("name");
-			}
-			model.addObject("name",name);
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			System.out.print("get data error!");
-			e.printStackTrace();
-		}
-
+//		try {
+//			Class.forName("com.mysql.cj.jdbc.Driver");
+//			System.out.println("加载資料庫驅動");
+//			String url = "jdbc:mysql://localhost:3306/project?useSSL=false&serverTimezone=UTC";// 聲明資料庫project的url
+//			String user = "root";// 資料庫帳號
+//			String pass = "a8s5d1f9";// 資料庫密碼
+//			// 建立資料庫連接，獲得連接對象conn
+//			Connection connect = DriverManager.getConnection(url, user, pass);
+//			System.out.println("資料庫連接成功");
+			
+//			for(int i = 0;i < memberlist.size();i++) {
+//				Statement stmt = connect.createStatement();
+//				ResultSet rs = stmt.executeQuery("select * from face WHERE faceId = "+memberlist.get(i).getFaceId());
+//				while (rs.next()) {
+//					name = rs.getString("name");
+//				}
+//				model.addObject("name",name);
+//			}
+//			} catch (ClassNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			System.out.print("get data error!");
+//			e.printStackTrace();
+//		}
 		return model;
 	}
 
