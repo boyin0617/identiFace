@@ -27,7 +27,6 @@ public class TrainController {
 	@PostMapping("/trainface")
     public ModelAndView TrainForm(@ModelAttribute("name") String name) {
 	       ModelAndView model = new ModelAndView("main");
-
 	       model.addObject("name", name);
 
 	       return model;

@@ -13,28 +13,37 @@ import javax.persistence.Table;
 public class Member {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long memberId;
+	private Long member_Id;
 	
-	private Long faceId;
+	private Long face_Id;
+	private Long family_Id;
 	private String phone;
 	private String name;
 	private String email;
 	private Date birth;
-
-	public Long getFaceId() {
-		return faceId;
-	}
-
-	public void setFaceId(Long faceId) {
-		this.faceId = faceId;
-	}
 	
 	public Long getMemberId() {
-		return memberId;
+		return member_Id;
 	}
 
-	public void setMemberId(Long memberId) {
-		this.memberId = memberId;
+	public void setMemberId(Long member_Id) {
+		this.member_Id = member_Id;
+	}
+	
+	public Long getFaceId() {
+		return face_Id;
+	}
+
+	public void setFaceId(Long face_Id) {
+		this.face_Id = face_Id;
+	}
+
+	public Long getFamilyId() {
+		return family_Id;
+	}
+
+	public void setFamilyId(Long family_Id) {
+		this.family_Id = family_Id;
 	}
 
 	public String getPhone() {
@@ -65,11 +74,6 @@ public class Member {
 	}
 
 	public void setBirth(Date birth) {
-		this.birth = birth;
-	}
-
-	//test
-	public void setBirth(String string) {
 		this.birth = birth;
 	}
 

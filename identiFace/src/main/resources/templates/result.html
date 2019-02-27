@@ -1,18 +1,31 @@
-<table th:each="member : ${members} ">
-    <tr>
-        <td>memberId</td>
-        <td>name</td>
-        <td>phonenumber</td>
-        <td>email</td>
-        <td>birth</td>
-    </tr>
-    <tr th:if="${member.faceId} > 0">
-        <td th:text="${member.memberId}">memberId</td>
-        <td th:text="${member.name}">name</td>
-        <td th:text="${member.phone}">phonenumber</td>
-        <td th:text="${member.email}">email</td>
-        <td th:text="${member.birth}">birth</td>
-    </tr>
-</table>
-<p th:text="'辨識到: ' ">沒有辨識到</p>
+<div>
+     	<table th:each="member : ${members} ">
+        <tr th:if="${member.faceId}>0">
+            <td>memberId</td>
+            <td>name</td>
+            <td>phonenumber</td>
+            <td>email</td>
+            <td>birth</td>
+        </tr>
+        <tr th:if="${member.faceId}>0">
+            <td th:text="${member.memberId}">memberId</td>
+            <td th:text="${member.name}">name</td>
+            <td th:text="${member.phone}">phonenumber</td>
+            <td th:text="${member.email}">email</td>
+            <td th:text="${member.birth}">birth</td>
+        </tr>
+        <br>
+        <tr th:if="${member.faceId}==0">
+            <p th:text="沒有辨識到會員，請再試一次">沒有辨識到會員，請再試一次</p>
+        </tr>
+        <a th:if="${member.faceId}>0" th:href="@{selectmember(memberId=${member.memberId})}">使用</a>
+        </table>
+</div>
+ <a href="javascript:func();"></a>
+ 
+<script>
+setTimeout(function func(){
+   window.location.reload(1);
+}, 1000);
+</script>
 <button onclick="history.back()">返回</button>

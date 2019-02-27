@@ -3,16 +3,16 @@
     <body>
     	    <input type="button" value="開啟辨識" onclick="javascript:location.href='http://localhost:9090/retrieveface'"><br><br>
     	    <form method="POST" enctype="multipart/form-data" action="/upload">
-               <input type="file" name="file" value="上傳照片"><br>
-               <input type="submit" value="上傳照片" />
+               <input type="file" name="file" value="上傳檔案"><br>
+               <input type="submit" value="送出" />
             </form>
             <br>
-            <p th:text="'你選擇的檔案: ' + ${picname}"></p><br>
+            <p th:text="'上傳照片名稱: ' + ${picname}"></p><br>
             <form method="POST" action="/trainface">
-                <input type="text" name="name" value="輸入姓名">
-                <input type="submit" value="訓練" />
+                <input type="text" name="name" value="請輸入姓名">
+                <input type="submit" value="送出" />
             </form>
-            <p th:text="'你的姓名為: ' + ${name}"></p>
+            <p th:text="'名字為: ' + ${name}"></p>
             <br><br>
             
 <!--        <div th:if="not ${error}" th:style="'display:none'"> -->
