@@ -17,8 +17,8 @@ public class Member {
 	
 	private Long face_Id;
 	private Long family_Id;
-	private String phone;
 	private String name;
+	private String phone;
 	private String email;
 	private Date birth;
 	
@@ -46,13 +46,6 @@ public class Member {
 		this.family_Id = family_Id;
 	}
 
-	public String getPhone() {
-		return phone;
-	}
-
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
 	public String getName() {
 		return name;
 	}
@@ -61,6 +54,14 @@ public class Member {
 		this.name = name;
 	}
 
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+	
 	public String getEmail() {
 		return email;
 	}

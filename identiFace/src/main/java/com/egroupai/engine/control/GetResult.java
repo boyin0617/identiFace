@@ -155,9 +155,9 @@ public class GetResult {
 		String cacheJsonName = "output.cache.egroup";
 		final Type faceListType = new TypeToken<ArrayList<Face>>() {}.getType();
 		ArrayList<String> getfacelist = new ArrayList<>();
-		//測試~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-		getfacelist.add("boyin");
 		int hasfound = 0;
+		JsonArray jo = null;
+		String faceListstring = "";
 		//連接資料庫
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
@@ -169,50 +169,21 @@ public class GetResult {
 			Connection connect = DriverManager.getConnection(url,user,pass);
 			System.out.println("資料庫連接成功");
 			Statement stmt = connect.createStatement();
-			//test!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-			Long faceId = (long) -1;
-			long memberId = 0;
-			String phonenumber = "";
-			String email = "";
-			String name = "";
-			Date birth = new Date();
-			ResultSet rs = stmt.executeQuery("SELECT * FROM `face` WHERE `name` LIKE 'boyin'");
-			while(rs.next()){
-				faceId = rs.getLong("faceId");
-			}
-			ResultSet rs2 = stmt.executeQuery("SELECT * FROM `member` WHERE `face_Id` LIKE '"+faceId+"'");
-			while(rs2.next()){
-				memberId = rs2.getLong("member_Id");
-				phonenumber = rs2.getString("phone");
-				name = rs2.getString("name");
-				email = rs2.getString("email");
-				birth = rs2.getDate("birth");
-				member = new Member();
-				//存到member
-				member.setMemberId((long) memberId);
-				member.setFaceId((long) faceId);
-				member.setName(name);
-				member.setEmail(email);
-				member.setPhone(phonenumber);
-				member.setBirth(birth);
-				memberlist.add(member);
-			}
-		
 		// Get Real-time data
 		while(count <= 10) {
 			long startTime = System.currentTimeMillis();
 			faceList = getCacheResult(ENGINEPATH,cacheJsonName);
 			System.out.println("Get Json Using Time:" + (System.currentTimeMillis() - startTime) + " ms,faceList="+new Gson().toJson(faceList));
 			// If your fps is 10, means recognize 10 frame per seconds, 1000 ms /10 frame = 100 ms
-			String faceListstring = new Gson().toJson(faceList);
+			faceListstring = new Gson().toJson(faceList);
 			Gson gsontest = new Gson();
-//			Long faceId = (long) -1;
-//			long memberId = 0;
-//			String phonenumber = "";
-//			String email = "";
-//			String name = "";
-//			Date birth = new Date();
-			JsonArray jo = gsontest.fromJson(faceListstring, JsonArray.class);
+			Long faceId = (long) -1;
+			long memberId = 0;
+			String phonenumber = "";
+			String email = "";
+			String name = "";
+			Date birth = new Date();
+			jo = gsontest.fromJson(faceListstring, JsonArray.class);
 			for(int i = 0;i < jo.size();i++) {
 				JsonObject jsonobject = jo.get(i).getAsJsonObject();
 				hasfound = jsonobject.get("hasFound").getAsInt();
@@ -221,28 +192,27 @@ public class GetResult {
 					if(!getfacelist.contains(name)) {
 						getfacelist.add(name);
 						//去資料庫找人			
-//						ResultSet rs = stmt.executeQuery("SELECT * FROM `face` WHERE `name` LIKE '"+name+"'");
-//						ResultSet rs = stmt.executeQuery("SELECT * FROM `face` WHERE `name` LIKE 'boyin'");
-//						while(rs.next()){
-//							faceId = rs.getLong("faceId");
-//						}
-//						ResultSet rs2 = stmt.executeQuery("SELECT * FROM `member` WHERE `face_Id` LIKE '"+faceId+"'");
-//						while(rs2.next()){
-//							memberId = rs2.getLong("member_Id");
-//							phonenumber = rs2.getString("phone");
-//							name = rs2.getString("name");
-//							email = rs2.getString("email");
-//							birth = rs2.getDate("birth");
-//							member = new Member();
-//							//存到member
-//							member.setMemberId((long) memberId);
-//							member.setFaceId((long) faceId);
-//							member.setName(name);
-//							member.setEmail(email);
-//							member.setPhone(phonenumber);
-//							member.setBirth(birth);
-//							memberlist.add(member);
-//						}
+						ResultSet rs = stmt.executeQuery("SELECT * FROM `face` WHERE `name` LIKE '"+name+"'");
+						while(rs.next()){
+							faceId = rs.getLong("faceId");
+						}
+						ResultSet rs2 = stmt.executeQuery("SELECT * FROM `member` WHERE `face_Id` LIKE '"+faceId+"'");
+						while(rs2.next()){
+							memberId = rs2.getLong("member_Id");
+							name = rs2.getString("name");
+							phonenumber = rs2.getString("phone");
+							email = rs2.getString("email");
+							birth = rs2.getDate("birth");
+							member = new Member();
+							//存到member
+							member.setMemberId((long) memberId);
+							member.setFaceId((long) faceId);
+							member.setName(name);
+							member.setEmail(email);
+							member.setPhone(phonenumber);
+							member.setBirth(birth);
+							memberlist.add(member);
+						}
 						}
 					}
 				}			

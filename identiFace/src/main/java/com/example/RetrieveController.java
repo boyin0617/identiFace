@@ -28,6 +28,9 @@ import com.egroupai.engine.util.CmdUtil;
 import com.egroupai.engine.util.TxtUtil;
 import com.example.entity.Customer;
 import com.example.entity.Member;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.example.dao.memberDAO;
 
 @Controller
@@ -36,14 +39,17 @@ public class RetrieveController {
 	memberDAO memberDAO;
 	private static final String Date  = null;
 //問題，沒辦法同時執行retrieveface跟getResult
-	@RequestMapping("/retrieveface")
-	public ModelAndView home() throws SQLException {
+	@RequestMapping("/getresult")
+	
+	public @ResponseBody List<Member> home() throws SQLException {
 		
 		ModelAndView model = new ModelAndView("result");
 		List<Member> memberlist = new ArrayList();
-//		String name = "";
-//		String ENGINEPATH = "C:\\eGroupAI_FaceEngine_v3.1.0";
-//		// RetrieveFace
+		Gson gson = new Gson();
+		ArrayList<String> resultstring = new ArrayList<>();
+		String name = "";
+		String ENGINEPATH = "C:\\eGroupAI_FaceEngine_v3.1.0";
+		// RetrieveFace
 //		RetrieveFace retrieveFace = new RetrieveFace();
 //		retrieveFace.setThreshold(0.7);
 //		retrieveFace.setHideMainWindow(false);
@@ -58,11 +64,9 @@ public class RetrieveController {
 //		retrieveFace.setTrainedFaceInfoPath("eGroup\\eGroup.Model.faceInfor");
 //		retrieveFace.setJsonPath("output");
 //		retrieveFace(retrieveFace);
-		memberlist = GetResult.main();
-
-//		memberlist = GetResult.main();
 		
-
+		memberlist = GetResult.main();
+		
 //		if(memberlist.get(i).getMemberId() == -1) {
 //			model.addObject("error", "辨識到多人，請再試一次");
 //			return model;
@@ -96,7 +100,28 @@ public class RetrieveController {
 //			System.out.print("get data error!");
 //			e.printStackTrace();
 //		}
-		return model;
+		return memberlist;
+	}
+	
+	@RequestMapping("/retrieveface")
+	public String RetrieveFace() {
+		
+		RetrieveFace retrieveFace = new RetrieveFace();
+		retrieveFace.setThreshold(0.7);
+		retrieveFace.setHideMainWindow(false);
+		retrieveFace.setShowThreadWindow(true);
+		retrieveFace.setResolution("720p");
+		retrieveFace.setOutputFacePath("outputFace1");
+		retrieveFace.setOutputFramePath("outputFrame1");
+		retrieveFace.setCam("0");
+		retrieveFace.setMinimumFaceSize(100);
+		retrieveFace.setThreshold(0.7);
+		retrieveFace.setTrainedBinaryPath("eGroup\\eGroup.Model.binary");
+		retrieveFace.setTrainedFaceInfoPath("eGroup\\eGroup.Model.faceInfor");
+		retrieveFace.setJsonPath("output");
+		retrieveFace(retrieveFace);
+		return "redirect:/";
+		
 	}
 
 	private static boolean retrieveFace(RetrieveFace retrieveFace) {
