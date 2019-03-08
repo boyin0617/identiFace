@@ -23,19 +23,19 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.JsonParser;
 
 import java.sql.*;
-/** 
-* @author 雿�� Daniel
-* @date 2018撟�8���16� 銝��8:35:11 
-* @version 
-* @description:
-*/
+
+/**
+ * @author 雿�� Daniel
+ * @date 2018撟�8���16� 銝��8:35:11
+ * @version
+ * @description:
+ */
 public class GetResult {
-	static protected String ENGINEPATH = "C:\\eGroupAI_FaceEngine_v3.1.0";
-	
-	public static List<Member> main() throws SQLException{
+	static protected String ENGINEPATH = "C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN";
+
+	public static void main() throws SQLException {
 //	public static List<Member> main() throws SQLException{
-		
-		
+
 //		Member member = new Member();
 //		List<Member> memberlist = new ArrayList<>();
 //		//getAllResult
@@ -80,12 +80,12 @@ public class GetResult {
 //				name = jo.get("personId").getAsString();
 //				if(!foundlist.contains(name)) {
 //					foundlist.add(name);
-////					if(foundlist.size() > 1) {
-////						 member.setMemberId((long) (-1));
-////						 System.out.println("辨識到"+foundlist.size()+"人，請再試一次");
-////						 System.out.println("memberId為"+member.getMemberId());
-////						 return member;
-////					}
+//					if(foundlist.size() > 1) {
+//						 member.setMemberId((long) (-1));
+//   					 System.out.println("辨識到"+foundlist.size()+"人，請再試一次");
+//						 System.out.println("memberId為"+member.getMemberId());
+//						 return member;
+//					}
 //				}
 //				System.out.println("辨識成功 ! 辨識到: "+name);
 //			}else if(found == 0) {
@@ -147,121 +147,169 @@ public class GetResult {
 //		// Stop by yourself
 //		return memberlist;
 //	}
-		//取得Real-time結果
-		int count = 0;
+		// 取得Real-time結果
 		Member member = new Member();
 		List<Face> faceList = new ArrayList<>();
-		List<Member> memberlist = new ArrayList<>();
+		List<Member> memberlist = new ArrayList<>(3);
 		String cacheJsonName = "output.cache.egroup";
-		final Type faceListType = new TypeToken<ArrayList<Face>>() {}.getType();
+		final Type faceListType = new TypeToken<ArrayList<Face>>() {
+		}.getType();
 		ArrayList<String> getfacelist = new ArrayList<>();
 		int hasfound = 0;
 		JsonArray jo = null;
 		String faceListstring = "";
-		//連接資料庫
+		// 連接資料庫
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			System.out.println("加載資料庫驅動");
-			String url="jdbc:mysql://localhost:3306/project?autoReconnect=true&useSSL=false&serverTimezone=UTC";//聲明資料庫project的url  
-			String user="root";//資料庫帳號
-			String pass="a8s5d1f9";//資料庫密碼
-			//建立資料庫連結，獲得連結對象conn  
-			Connection connect = DriverManager.getConnection(url,user,pass);
+			String url = "jdbc:mysql://localhost:3306/project?autoReconnect=true&useSSL=false&serverTimezone=UTC";// 聲明資料庫project的url
+			String user = "root";// 資料庫帳號
+			String pass = "a8s5d1f9";// 資料庫密碼
+			// 建立資料庫連結，獲得連結對象conn
+			Connection connect = DriverManager.getConnection(url, user, pass);
 			System.out.println("資料庫連接成功");
 			Statement stmt = connect.createStatement();
-		// Get Real-time data
-		while(count <= 10) {
-			long startTime = System.currentTimeMillis();
-			faceList = getCacheResult(ENGINEPATH,cacheJsonName);
-			System.out.println("Get Json Using Time:" + (System.currentTimeMillis() - startTime) + " ms,faceList="+new Gson().toJson(faceList));
-			// If your fps is 10, means recognize 10 frame per seconds, 1000 ms /10 frame = 100 ms
-			faceListstring = new Gson().toJson(faceList);
-			Gson gsontest = new Gson();
-			Long faceId = (long) -1;
-			long memberId = 0;
-			String phonenumber = "";
-			String email = "";
-			String name = "";
-			Date birth = new Date();
-			jo = gsontest.fromJson(faceListstring, JsonArray.class);
-			for(int i = 0;i < jo.size();i++) {
-				JsonObject jsonobject = jo.get(i).getAsJsonObject();
-				hasfound = jsonobject.get("hasFound").getAsInt();
-				if(hasfound == 1) {
-					name = jsonobject.get("personId").getAsString();
-					if(!getfacelist.contains(name)) {
-						getfacelist.add(name);
-						//去資料庫找人			
-						ResultSet rs = stmt.executeQuery("SELECT * FROM `face` WHERE `name` LIKE '"+name+"'");
-						while(rs.next()){
-							faceId = rs.getLong("faceId");
-						}
-						ResultSet rs2 = stmt.executeQuery("SELECT * FROM `member` WHERE `face_Id` LIKE '"+faceId+"'");
-						while(rs2.next()){
-							memberId = rs2.getLong("member_Id");
-							name = rs2.getString("name");
-							phonenumber = rs2.getString("phone");
-							email = rs2.getString("email");
-							birth = rs2.getDate("birth");
-							member = new Member();
-							//存到member
-							member.setMemberId((long) memberId);
-							member.setFaceId((long) faceId);
-							member.setName(name);
-							member.setEmail(email);
-							member.setPhone(phonenumber);
-							member.setBirth(birth);
-							memberlist.add(member);
-						}
+			stmt.executeUpdate("DELETE FROM `recognise`");
+			// Get Real-time data
+			while (true) {
+				long startTime = System.currentTimeMillis();
+				faceList = getCacheResult(ENGINEPATH, cacheJsonName);
+				System.out.println("Get Json Using Time:" + (System.currentTimeMillis() - startTime) + " ms,faceList="
+						+ new Gson().toJson(faceList));
+				// If your fps is 10, means recognize 10 frame per seconds, 1000 ms /10 frame =
+				// 100 ms
+				faceListstring = new Gson().toJson(faceList);
+				Gson gson = new Gson();
+				Long faceId = (long) -1;
+				long memberId = 0;
+				String phonenumber = "";
+				String email = "";
+				String name = "";
+				Date birth = new Date();
+				jo = gson.fromJson(faceListstring, JsonArray.class);
+				for (int i = 0; i < jo.size(); i++) {
+					JsonObject jsonobject = jo.get(i).getAsJsonObject();
+					hasfound = jsonobject.get("hasFound").getAsInt();
+					if (hasfound == 1) {
+						name = jsonobject.get("personId").getAsString();
+						if (!getfacelist.contains(name)) {
+							//改參數
+							System.out.println("當下辨識到"+name);
+							if(getfacelist.size()<1) {
+								getfacelist.add(name);
+							} else {
+								getfacelist.remove(0);
+								getfacelist.add(name);
+							}
+							Statement stmtcount = connect.createStatement();
+							ResultSet rscount = stmtcount.executeQuery("SELECT * FROM `recognise`");
+							int datacount = 0;
+							while(rscount.next()) {
+							if (rscount.last())
+								datacount = rscount.getRow();
+							else
+								datacount = 0;
+							}
+							rscount.close();
+							System.out.println("datacount = "+datacount);
+							// 去資料庫找人
+							Statement stmtrs = connect.createStatement();
+							ResultSet rs = stmtrs.executeQuery("SELECT * FROM `face` WHERE `name` LIKE '" + name + "'");
+							while (rs.next()) {
+								faceId = rs.getLong("faceId");
+							}
+							Statement stmtrs2 = connect.createStatement();
+							ResultSet rs2 = stmtrs2.executeQuery("SELECT * FROM `member` WHERE `face_Id` LIKE '" + faceId + "'");
+							while (rs2.next()) {
+								memberId = rs2.getLong("member_Id");
+								name = rs2.getString("name");
+								phonenumber = rs2.getString("phone");
+								email = rs2.getString("email");
+								birth = rs2.getDate("birth");
+								member = new Member();
+								// 存到member
+								member.setMemberId((long) memberId);
+								member.setFaceId((long) faceId);
+								member.setName(name);
+								member.setEmail(email);
+								member.setPhone(phonenumber);
+								member.setBirth(birth);
+								//改參數
+								if (datacount == 1) {
+									System.out.println("執行了datacount == 3那句");
+									stmt.executeUpdate("DELETE FROM `recognise` WHERE `recognise`.`recogniseid` = 1");
+//									stmt.executeUpdate(
+//											"UPDATE `recognise` SET `recogniseid` = '1' WHERE `recognise`.`recogniseid` = 2");
+//									stmt.executeUpdate(
+//											"UPDATE `recognise` SET `recogniseid` = '2' WHERE `recognise`.`recogniseid` = 3");
+									PreparedStatement pre1 = connect.prepareStatement(
+											"INSERT INTO `recognise` (`recogniseid`, `name`, `phone`, `email`) VALUES (1, ?, ?, ?)");
+									pre1.setString(1, member.getName());
+									pre1.setString(2, member.getPhone());
+									pre1.setString(3, member.getEmail());
+									pre1.executeUpdate();
+									//改參數
+								} else if (datacount < 1) {
+									PreparedStatement pre2 = connect.prepareStatement(
+											"INSERT INTO `recognise` (`recogniseid`, `name`, `phone`, `email`) VALUES (?, ?, ?, ?)");
+									System.out.println("新增了"+member.getName());
+									pre2.setLong(1, (datacount + 1));
+									pre2.setString(2, member.getName());
+									pre2.setString(3, member.getPhone());
+									pre2.setString(4, member.getEmail());
+									pre2.executeUpdate();
+								}
+							}
 						}
 					}
-				}			
-			try {
-				Thread.sleep(300);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				}
+				try {
+					// 調速度的
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				for (int i = 0; i < getfacelist.size(); i++) {
+					System.out.println("辨識到" + getfacelist.get(i));
+				}
+//				for (int i = 0; i < memberlist.size(); i++) {
+//					System.out.println("第" + (i + 1) + "個,名字 :" + memberlist.get(i).getName() + ", faceid :"
+//							+ memberlist.get(i).getFaceId() + ", email :" + memberlist.get(i).getEmail());
+//				}
 			}
-			for(int i = 0;i < getfacelist.size();i++) {
-				System.out.println("辨識到"+getfacelist.get(i));
-			}
-			count++;
-		}
-		for(int i = 0;i < memberlist.size();i++) {
-			System.out.println("第"+(i+1)+"個,名字 :"+memberlist.get(i).getName()+", faceid :"+memberlist.get(i).getFaceId()+", email :"+memberlist.get(i).getEmail());
-		}
-
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			System.out.print("get data error!");
 			e.printStackTrace();
 		}
-		return memberlist;
+//		return memberlist;
 	}
-		
-	
+
 	/**
 	 * Get Retrieve result json
+	 * 
 	 * @author Daniel
 	 *
 	 * @param jsonPath
 	 * @param startIndex
 	 * @return
 	 */
-	public static List<Face> getAllResult(String jsonPath,String jsonName,int startIndex) {
+	public static List<Face> getAllResult(String jsonPath, String jsonName, int startIndex) {
 		// init func
 		final Gson gson = new Gson();
 		final CopyUtil copyUtil = new CopyUtil();
 
 		// init variable
-		final Type faceListType = new TypeToken<ArrayList<Face>>() {}.getType();
+		final Type faceListType = new TypeToken<ArrayList<Face>>() {
+		}.getType();
 		List<Face> faceList = new ArrayList<Face>();
 
 		// Get retrieve result
-		final File sourceJson = new File(jsonPath.toString() + "/"+jsonName+".json");
-		final StringBuilder jsonFileName = new StringBuilder(jsonPath + "/"+jsonName+"_copy.json");
+		final File sourceJson = new File(jsonPath.toString() + "/" + jsonName + ".json");
+		final StringBuilder jsonFileName = new StringBuilder(jsonPath + "/" + jsonName + "_copy.json");
 		final File destJson = new File(jsonFileName.toString());
-		if(sourceJson.exists()&&sourceJson.length()!=destJson.length()) {
+		if (sourceJson.exists() && sourceJson.length() != destJson.length()) {
 			try {
 				copyUtil.copyFile(sourceJson, destJson);
 			} catch (IOException e1) {
@@ -314,36 +362,38 @@ public class GetResult {
 					}
 				}
 			}
-		}		
+		}
 		return faceList;
 	}
-	
+
 	/**
 	 * Get Retrieve result json
+	 * 
 	 * @author Daniel
 	 *
 	 * @param jsonPath
 	 * @param startIndex
 	 * @return
 	 */
-	
-	public static List<Face> getCacheResult(String jsonPath,String jsonName) {
+
+	public static List<Face> getCacheResult(String jsonPath, String jsonName) {
 		// init func
 		final Gson gson = new Gson();
 		final CopyUtil copyUtil = new CopyUtil();
 
 		// init variable
-		final Type faceListType = new TypeToken<ArrayList<Face>>() {}.getType();
+		final Type faceListType = new TypeToken<ArrayList<Face>>() {
+		}.getType();
 		List<Face> faceList = new ArrayList<Face>();
 		String name = "";
 		int hasfound = 0;
 		ArrayList<String> getfacelist = new ArrayList<>();
-		
+
 		// Get retrieve result
-		final File sourceJson = new File(jsonPath.toString() + "/"+jsonName+".json");
-		final StringBuilder jsonFileName = new StringBuilder(jsonPath + "/"+jsonName+"_copy.json");
+		final File sourceJson = new File(jsonPath.toString() + "/" + jsonName + ".json");
+		final StringBuilder jsonFileName = new StringBuilder(jsonPath + "/" + jsonName + "_copy.json");
 		final File destJson = new File(jsonFileName.toString());
-		if(sourceJson.exists()&&sourceJson.length()!=destJson.length()) {
+		if (sourceJson.exists() && sourceJson.length() != destJson.length()) {
 			try {
 				copyUtil.copyFile(sourceJson, destJson);
 			} catch (IOException e1) {
