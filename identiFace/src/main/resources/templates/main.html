@@ -15,48 +15,6 @@
             </form>
             <p th:text="'名字為: ' + ${name}"></p>
             <br><br>
-            
-<!--        <div th:if="not ${error}" th:style="'display:none'"> -->
-<!--
-            <table th:object="${member}">
-                <tr>
-                    <td>memberId</td>
-                    <td>name</td>
-                    <td>phonenumber</td>
-                    <td>email</td>
-                    <td>birth</td>
-                </tr>
-                <tr>
-                    <td th:text="*{memberId}">memberId</td>
-                    <td th:text="${name}">name</td>
-                    <td th:text="*{phone}">phonenumber</td>
-                    <td th:text="*{email}">email</td>
-                    <td th:text="*{birth}">birth</td>
-                </tr>
-            </table>
--->
-<!--
-            <table th:if="${member.memberId} &eq; -1" th:style="'display:none'" th:object="${member}">
-                <tr>
-                    <td>memberId</td>
-                    <td>name</td>
-                    <td>phonenumber</td>
-                    <td>email</td>
-                    <td>birth</td>
-                </tr>
-                <tr>
-                    <td>memberId</td>
-                    <td>name</td>
-                    <td>phonenumber</td>
-                    <td>email</td>
-                    <td>birth</td>
-                </tr>
-            </table>
--->
-<!--        </div>-->
-        
-            <p th:text="'辨識到: ' + ${name}"></p>
-<!--            <p th:if="${error}" th:text="${error}"></p>-->
             <button onclick="history.back()">返回</button>
         </body>
 </html>
