@@ -46,8 +46,6 @@ public class RetrieveController {
 		List<Member> memberlist = new ArrayList();
 		Gson gson = new Gson();
 		ArrayList<String> resultstring = new ArrayList<>();
-		String name = "";
-		String ENGINEPATH = "C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN";
 
 		GetResult.main();
 

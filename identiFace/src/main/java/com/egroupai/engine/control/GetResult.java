@@ -34,122 +34,11 @@ public class GetResult {
 	static protected String ENGINEPATH = "C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN";
 
 	public static void main() throws SQLException {
-//	public static List<Member> main() throws SQLException{
 
-//		Member member = new Member();
-//		List<Member> memberlist = new ArrayList<>();
-//		//getAllResult
-//		List<Face> faceList = new ArrayList<>();
-//		long faceId = 0;
-//		long memberId = 0;
-//		String phonenumber = "";
-//		String email = "";
-//		String name = "";
-//		Date birth = new Date();
-//		Date date = new Date();
-//	    SimpleDateFormat todaydate = new SimpleDateFormat("yyyy-MM-dd");
-//	    String today = todaydate.format(date);
-//		// Get All Retrieve Data
-//		Integer startIndex = 0;
-//		String jsonName = "output."+today+".egroup";	// Get All Retrieve Data
-//		ArrayList<String> foundlist = new ArrayList<>();
-//		
-//		while(true) {
-//			long startTime = System.currentTimeMillis();
-//			faceList = getAllResult(ENGINEPATH,jsonName ,startIndex);
-//			if(faceList.size()>0){
-//				startIndex = faceList.get(faceList.size()-1).getEndIndex();
-//			}
-//			String jsoncontext = new Gson().toJson(faceList);
-//			System.out.println("Get Json Using Time:" + (System.currentTimeMillis() - startTime) + " ms,startIndex="+startIndex+",faceList="+jsoncontext);
-//			// If your fps is 10, means recognize 10 frame per seconds, 1000 ms /10 frame = 100 ms
-//			
-//			try {
-//				Thread.sleep(100);
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			
-//			for(int i = 0; i <= faceList.size()-1;i++) {
-//			String testjson = new Gson().toJson(faceList.get(i));
-//			JsonParser jp = new JsonParser();
-//			JsonObject jo = jp.parse(testjson).getAsJsonObject();
-//			int found = jo.get("hasFound").getAsInt();
-//			if(found == 1) {
-//				name = jo.get("personId").getAsString();
-//				if(!foundlist.contains(name)) {
-//					foundlist.add(name);
-//					if(foundlist.size() > 1) {
-//						 member.setMemberId((long) (-1));
-//   					 System.out.println("辨識到"+foundlist.size()+"人，請再試一次");
-//						 System.out.println("memberId為"+member.getMemberId());
-//						 return member;
-//					}
-//				}
-//				System.out.println("辨識成功 ! 辨識到: "+name);
-//			}else if(found == 0) {
-//				System.out.println("辨識失敗，請再試一次");
-//			}
-//			}
-//			break;
-//		}
-//		if(foundlist.size() == 0) {
-//			member.setFaceId((long) 0);
-//			memberlist.add(member);
-//			System.out.println("沒有辨識到，請再試一次");
-//			return memberlist;
-//		}
-//		try {
-//			Class.forName("com.mysql.cj.jdbc.Driver");
-//			System.out.println("加載資料庫驅動");
-//			String url="jdbc:mysql://localhost:3306/project?autoReconnect=true&useSSL=false&serverTimezone=UTC";//聲明資料庫project的url  
-//			String user="root";//資料庫帳號
-//			String pass="a8s5d1f9";//資料庫密碼
-//			//建立資料庫連結，獲得連結對象conn  
-//			Connection connect=DriverManager.getConnection(url,user,pass);
-//			System.out.println("資料庫連接成功");
-//			Statement stmt = connect.createStatement();
-//			for(int i = 0;i < foundlist.size();i++) {
-//			ResultSet rs = stmt.executeQuery("SELECT * FROM `face` WHERE `name` LIKE '"+foundlist.get(i)+"'");
-//				while (rs.next()) {
-//					faceId = rs.getInt("faceId");
-//				}
-//			ResultSet rs2 = stmt.executeQuery("SELECT * FROM `member` WHERE `face_Id` LIKE '"+faceId+"'");
-//			while (rs2.next()) {
-//					
-//					memberId = rs2.getLong("member_Id");
-//					phonenumber = rs2.getString("phone");
-//					name = rs2.getString("name");
-//					email = rs2.getString("email");
-//					birth = rs2.getDate("birth");
-//				}
-//			System.out.println("會員名字 : "+foundlist.get(i)+", 資料庫名字為"+name+", faceid為 :  "+faceId+", 電話為 : " + phonenumber + ", email為 : " + email + ", birth為:" + birth);
-//			member = new Member();
-//			//存到member
-//			member.setMemberId((long) memberId);
-//			member.setFaceId((long) faceId);
-//			member.setName(name);
-//			member.setEmail(email);
-//			member.setPhone(phonenumber);
-//			member.setBirth(birth);
-//			System.out.println("資料庫名字為"+member.getName()+", faceid為 :  "+member.getFaceId()+", 電話為 : " + member.getPhone() + ", email為 : " + member.getEmail() + ", birth為:" + member.getBirth());
-//			memberlist.add(member);
-//			}
-//		} catch (ClassNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			System.out.print("get data error!");
-//			e.printStackTrace();
-//		}
-//		for(int i = 0;i < memberlist.size();i++) {
-//		System.out.println("第"+i+"個,名字 :"+memberlist.get(i).getName()+", faceid :"+memberlist.get(i).getFaceId()+", email :"+memberlist.get(i).getEmail());
-//		}
-//		// Stop by yourself
-//		return memberlist;
-//	}
 		// 取得Real-time結果
 		Member member = new Member();
 		List<Face> faceList = new ArrayList<>();
+		//改參數
 		List<Member> memberlist = new ArrayList<>(3);
 		String cacheJsonName = "output.cache.egroup";
 		final Type faceListType = new TypeToken<ArrayList<Face>>() {
@@ -162,14 +51,17 @@ public class GetResult {
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			System.out.println("加載資料庫驅動");
-			String url = "jdbc:mysql://localhost:3306/project?autoReconnect=true&useSSL=false&serverTimezone=UTC";// 聲明資料庫project的url
-			String user = "root";// 資料庫帳號
-			String pass = "a8s5d1f9";// 資料庫密碼
+			String url="jdbc:mysql://localhost:3306/identiFace?autoReconnect=true&useSSL=false&serverTimezone=UTC";//声明数据库project的url  
+//			String url="jdbc:mysql://140.136.155.124/identiFace?autoReconnect=true&useSSL=false&serverTimezone=UTC";
+//			String user="identiFace";//数据库账号  
+//			String pass = "Faceidenti";
+			String user="root";
+			String pass="a8s5d1f9";//数据库密码
 			// 建立資料庫連結，獲得連結對象conn
 			Connection connect = DriverManager.getConnection(url, user, pass);
 			System.out.println("資料庫連接成功");
 			Statement stmt = connect.createStatement();
-			stmt.executeUpdate("DELETE FROM `recognise`");
+			stmt.executeUpdate("DELETE FROM `member_recognize`");
 			// Get Real-time data
 			while (true) {
 				long startTime = System.currentTimeMillis();
@@ -195,14 +87,14 @@ public class GetResult {
 						if (!getfacelist.contains(name)) {
 							//改參數
 							System.out.println("當下辨識到"+name);
-							if(getfacelist.size()<1) {
+							if(getfacelist.size()<3) {
 								getfacelist.add(name);
 							} else {
 								getfacelist.remove(0);
 								getfacelist.add(name);
 							}
 							Statement stmtcount = connect.createStatement();
-							ResultSet rscount = stmtcount.executeQuery("SELECT * FROM `recognise`");
+							ResultSet rscount = stmtcount.executeQuery("SELECT * FROM `recognize`");
 							int datacount = 0;
 							while(rscount.next()) {
 							if (rscount.last())
@@ -213,16 +105,16 @@ public class GetResult {
 							rscount.close();
 							System.out.println("datacount = "+datacount);
 							// 去資料庫找人
-							Statement stmtrs = connect.createStatement();
-							ResultSet rs = stmtrs.executeQuery("SELECT * FROM `face` WHERE `name` LIKE '" + name + "'");
-							while (rs.next()) {
-								faceId = rs.getLong("faceId");
-							}
+//							Statement stmtrs = connect.createStatement();
+//							ResultSet rs = stmtrs.executeQuery("SELECT * FROM `face` WHERE `name` LIKE '" + name + "'");
+//							while (rs.next()) {
+//								faceId = rs.getLong("faceId");
+//							}
 							Statement stmtrs2 = connect.createStatement();
-							ResultSet rs2 = stmtrs2.executeQuery("SELECT * FROM `member` WHERE `face_Id` LIKE '" + faceId + "'");
+							ResultSet rs2 = stmtrs2.executeQuery("SELECT * FROM `member` WHERE `member_name` LIKE '" + name + "'");
 							while (rs2.next()) {
-								memberId = rs2.getLong("member_Id");
-								name = rs2.getString("name");
+								memberId = rs2.getLong("memberId");
+								name = rs2.getString("member_name");
 								phonenumber = rs2.getString("phone");
 								email = rs2.getString("email");
 								birth = rs2.getDate("birth");
@@ -235,23 +127,24 @@ public class GetResult {
 								member.setPhone(phonenumber);
 								member.setBirth(birth);
 								//改參數
-								if (datacount == 1) {
-									System.out.println("執行了datacount == 3那句");
-									stmt.executeUpdate("DELETE FROM `recognise` WHERE `recognise`.`recogniseid` = 1");
-//									stmt.executeUpdate(
-//											"UPDATE `recognise` SET `recogniseid` = '1' WHERE `recognise`.`recogniseid` = 2");
-//									stmt.executeUpdate(
-//											"UPDATE `recognise` SET `recogniseid` = '2' WHERE `recognise`.`recogniseid` = 3");
+								if (datacount == 3) {
+									System.out.println("額滿，擠掉");
+									stmt.executeUpdate("DELETE FROM `member_recognize` WHERE `member_recognize`.`recogniseid` = 1");
+									stmt.executeUpdate(
+											"UPDATE `member_recognize` SET `member_recognize` = '1' WHERE `member_recognize`.`recogniseid` = 2");
+									stmt.executeUpdate(
+											"UPDATE `member_recognize` SET `member_recognize` = '2' WHERE `member_recognize`.`recogniseid` = 3");
 									PreparedStatement pre1 = connect.prepareStatement(
-											"INSERT INTO `recognise` (`recogniseid`, `name`, `phone`, `email`) VALUES (1, ?, ?, ?)");
+											"INSERT INTO `member_recognize` (`recogniseid`, `recog_member_name`, `phone`, `email`) VALUES (3, ?, ?, ?)");
 									pre1.setString(1, member.getName());
 									pre1.setString(2, member.getPhone());
 									pre1.setString(3, member.getEmail());
 									pre1.executeUpdate();
 									//改參數
-								} else if (datacount < 1) {
+								} else if (datacount < 3) {
+									System.out.println("新增");
 									PreparedStatement pre2 = connect.prepareStatement(
-											"INSERT INTO `recognise` (`recogniseid`, `name`, `phone`, `email`) VALUES (?, ?, ?, ?)");
+											"INSERT INTO `member_recognize` (`recogniseid`, `recog_member_name`, `phone`, `email`) VALUES (?, ?, ?, ?)");
 									System.out.println("新增了"+member.getName());
 									pre2.setLong(1, (datacount + 1));
 									pre2.setString(2, member.getName());

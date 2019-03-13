@@ -15,8 +15,7 @@ public class facesheet {
  @GeneratedValue(strategy = GenerationType.IDENTITY)
  private int faceid;
 
- private int imageid;
- private String name;
+ private String imagePath;
  private int age;
  private String gender;
  
@@ -27,18 +26,12 @@ public class facesheet {
 public void setfaceId(int id) {
  this.faceid = id;
 }
-public int getimageId() {
- return imageid;
+public String getimagePath() {
+ return imagePath;
 }
-public void setimageId(int id2) {
- this.imageid = id2;
+public void setimagePath(String imagePath) {
+ this.imagePath = imagePath;
 }
-public String getName() {
-  return name;
- }
-public void setName(String name) {
-  this.name = name;
- }
 
 public int getAge() {
   return age;

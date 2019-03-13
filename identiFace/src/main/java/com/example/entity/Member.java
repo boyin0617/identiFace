@@ -12,46 +12,45 @@ import javax.persistence.Table;
 @Table(name = "member")
 public class Member {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long member_Id;
+	private Long memberId;
 	
-	private Long face_Id;
-	private Long family_Id;
-	private String name;
+	private Long member_faceId;
+	private Long member_familyId;
+	private String member_name;
 	private String phone;
 	private String email;
 	private Date birth;
 	
 	public Long getMemberId() {
-		return member_Id;
+		return memberId;
 	}
 
-	public void setMemberId(Long member_Id) {
-		this.member_Id = member_Id;
+	public void setMemberId(Long memberId) {
+		this.memberId = memberId;
 	}
 	
 	public Long getFaceId() {
-		return face_Id;
+		return member_faceId;
 	}
 
-	public void setFaceId(Long face_Id) {
-		this.face_Id = face_Id;
+	public void setFaceId(Long member_faceId) {
+		this.member_faceId = member_faceId;
 	}
 
 	public Long getFamilyId() {
-		return family_Id;
+		return member_familyId;
 	}
 
-	public void setFamilyId(Long family_Id) {
-		this.family_Id = family_Id;
+	public void setFamilyId(Long member_familyId) {
+		this.member_familyId = member_familyId;
 	}
 
 	public String getName() {
-		return name;
+		return member_name;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setName(String member_name) {
+		this.member_name = member_name;
 	}
 
 	public String getPhone() {

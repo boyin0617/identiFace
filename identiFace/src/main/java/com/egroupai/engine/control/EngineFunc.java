@@ -29,7 +29,7 @@ import java.sql.*;
 * @description:
  */
 public class EngineFunc{
-	static protected String ENGINEPATH = "C:\\\\eGroupAI_FaceEngine_CPU_V3.1.3_SN";
+	static protected String ENGINEPATH = "C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN";
 	public static void main(String args[]) throws IOException, SQLException {
 		String  binarypath = "";
 		String  faceInforpath = "";
@@ -37,9 +37,11 @@ public class EngineFunc{
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			System.out.println("加载数据库驱动成功");
-			String url="jdbc:mysql://localhost:3306/project?autoReconnect=true&useSSL=false&serverTimezone=UTC";//声明数据库project的url  
+//			String url="jdbc:mysql://localhost:3306/project?autoReconnect=true&useSSL=false&serverTimezone=UTC";//声明数据库project的url  
+			String url="jdbc:mysql://140.136.155.124/identiFace?autoReconnect=true&useSSL=false&serverTimezone=UTC";
 			String user="root";//数据库账号  
-			String pass="a8s5d1f9";//数据库密码
+			String pass = "Faceidenti";
+//			String pass="a8s5d1f9";//数据库密码
 			//建立数据库连接，获得连接对象conn  
 			Connection connect=DriverManager.getConnection(url,user,pass);
 			System.out.println("数据库连接成功");
