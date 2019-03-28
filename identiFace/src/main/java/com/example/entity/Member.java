@@ -12,7 +12,7 @@ import javax.persistence.Table;
 @Table(name = "member")
 public class Member {
 	@Id
-	private Long memberId;
+	private String memberId;
 	
 	private Long member_faceId;
 	private Long member_familyId;
@@ -21,11 +21,11 @@ public class Member {
 	private String email;
 	private Date birth;
 	
-	public Long getMemberId() {
+	public String getMemberId() {
 		return memberId;
 	}
 
-	public void setMemberId(Long memberId) {
+	public void setMemberId(String memberId) {
 		this.memberId = memberId;
 	}
 	

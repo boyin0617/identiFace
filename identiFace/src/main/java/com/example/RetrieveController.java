@@ -40,18 +40,17 @@ public class RetrieveController {
 	private static final String Date  = null;
 	
 	@RequestMapping("/getresult")
-	public String home() throws SQLException {
+	@ResponseBody
+	public List<List<String>> home() throws SQLException {
 		
-		ModelAndView model = new ModelAndView("result");
-		List<Member> memberlist = new ArrayList();
-		Gson gson = new Gson();
-		ArrayList<String> resultstring = new ArrayList<>();
-
-		GetResult.main();
-
+//		ModelAndView model = new ModelAndView("result");
+//		List<Member> memberlist = new ArrayList();
+//		Gson gson = new Gson();
+//		ArrayList<String> resultstring = new ArrayList<>();
+//		memberlist = GetResult.main();
 //		model.addObject("members", memberlist);
-
-		return "redirect:/";
+		List<List<String>> resultlist = GetResult.main();
+		return resultlist;
 	}
 	
 	@RequestMapping("/retrieveface")
@@ -71,8 +70,7 @@ public class RetrieveController {
 		retrieveFace.setTrainedFaceInfoPath("eGroup\\eGroup.Model.faceInfor");
 		retrieveFace.setJsonPath("output");
 		retrieveFace(retrieveFace);
-		return "redirect:/";
-		
+		return "redirect:/";		
 	}
 
 	private static boolean retrieveFace(RetrieveFace retrieveFace) {
@@ -121,7 +119,6 @@ public class RetrieveController {
 			e.printStackTrace();
 		}
 		return model;
-
 	}
 }
 	

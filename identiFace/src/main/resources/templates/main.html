@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
     <body>
-    	    <input type="button" value="開啟鏡頭" onclick="javascript:location.href='http://localhost:9090/retrieveface'">
-    	    <input type="button" value="取得結果" onclick="javascript:location.href='http://localhost:9090/getresult'"><br><br>
-    	    <form method="POST" enctype="multipart/form-data" action="/upload">
-               <input type="file" name="file" value="上傳檔案"><br>
+         <input type="button" value="開啟鏡頭" onclick="javascript:location.href='http://localhost:9090/retrieveface'">
+         <input type="button" value="取得結果" onclick="javascript:location.href='http://localhost:9090/getresult'"><br><br>
+         <form method="POST" enctype="multipart/form-data" action="/upload">
+               <input type="file" name="file" value="上傳檔案" multiple><br>
                <input type="submit" value="送出" />
             </form>
             <br>
@@ -15,6 +15,11 @@
             </form>
             <p th:text="'名字為: ' + ${name}"></p>
             <br><br>
+            
+            <input type="button" value="訓練" onclick="javascript:location.href='http://localhost:9090/train'"><br><br>
+            <input type="button" value="上傳" onclick="javascript:location.href='http://localhost:9090/upload'"><br><br>
+            
+            
             <button onclick="history.back()">返回</button>
         </body>
 </html>
