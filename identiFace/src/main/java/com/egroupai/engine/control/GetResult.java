@@ -7,13 +7,20 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.egroupai.engine.entity.Face;
 import com.egroupai.engine.util.CopyUtil;
+import com.example.GenerateFolder;
 import com.example.entity.Member;
 import com.example.entity.MemberRec;
 import com.google.gson.Gson;
@@ -33,8 +40,53 @@ import java.sql.*;
  */
 public class GetResult {
 	static protected String ENGINEPATH = "D:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN";
+	
+	public static List<String> main() throws SQLException {
 
-	public static List<List<String>> main() throws SQLException {
+
+		List<Face> faceList = new ArrayList<>();
+		String cacheJsonName = "output.cache.egroup";
+		final Type faceListType = new TypeToken<ArrayList<Face>>() {
+		}.getType();
+		List<String> facepathlist = new ArrayList<>();
+		int hasfound = 0;
+		JsonArray jo = null;
+		String faceListstring = "";
+		int count = 0;
+
+		while (count<5) {
+			long startTime = System.currentTimeMillis();
+			faceList = getCacheResult(ENGINEPATH, cacheJsonName);
+//			System.out.println("Get Json Using Time:" + (System.currentTimeMillis() - startTime) + " ms,faceList="
+//					+ new Gson().toJson(faceList));
+			// If your fps is 10, means recognize 10 frame per seconds, 1000 ms /10 frame =
+			// 100 ms
+			faceListstring = new Gson().toJson(faceList);
+			Gson gson = new Gson();
+			String faceId = "";
+			jo = gson.fromJson(faceListstring, JsonArray.class);
+			for (int i = jo.size()-1; i >= 0; i--) {
+				JsonObject jsonobject = jo.get(i).getAsJsonObject();
+				hasfound = jsonobject.get("hasFound").getAsInt();
+				if (hasfound == 1) {
+					faceId = jsonobject.get("personId").getAsString();
+					System.out.println("辨識到faceId :"+faceId);	
+					facepathlist.add(faceId);
+				}
+			}
+			try {
+				// 調速度的
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			count++;
+		}
+		return facepathlist;
+	}
+	
+	public static Map<String, List<String>> train() throws SQLException {
 
 		// 取得Real-time結果
 		Member member = new Member();
@@ -46,7 +98,9 @@ public class GetResult {
 		final Type faceListType = new TypeToken<ArrayList<Face>>() {
 		}.getType();
 		List<String> allfacelist = new ArrayList<>();
+		List<String> facepathlist = new ArrayList<>();
 		List<List<String>> resultlist = new ArrayList<>();
+		Map<String,List<String>> resultmap = new HashMap<>();
 		int hasfound = 0;
 		JsonArray jo = null;
 		String faceListstring = "";
@@ -65,7 +119,7 @@ public class GetResult {
 //			Statement stmt = connect.createStatement();
 //			stmt.executeUpdate("DELETE FROM `member_recognize`");
 		// Get Real-time data
-		while (count<10) {
+		while (count<5) {
 			long startTime = System.currentTimeMillis();
 			faceList = getCacheResult(ENGINEPATH, cacheJsonName);
 //			System.out.println("Get Json Using Time:" + (System.currentTimeMillis() - startTime) + " ms,faceList="
@@ -82,26 +136,62 @@ public class GetResult {
 			String faceId = "";
 			Date birth = new Date();
 			jo = gson.fromJson(faceListstring, JsonArray.class);
-			for (int i = 0; i < jo.size(); i++) {
-				List<String> getfacelist = new ArrayList<>(2);
+			for (int i = jo.size()-1; i >= 0; i--) {
 				JsonObject jsonobject = jo.get(i).getAsJsonObject();
 				hasfound = jsonobject.get("hasFound").getAsInt();
 				if (hasfound == 1) {
 					faceId = jsonobject.get("personId").getAsString();
-					if (!allfacelist.contains(faceId)) {
-						//改參數
-						allfacelist.add(faceId);
-						System.out.println("辨識到faceId :"+faceId);
-						facepath = jsonobject.get("frameFace").getAsJsonObject().get("frameFacePath").getAsString();
-						getfacelist.add(faceId);
-						getfacelist.add(facepath);
-						if(resultlist.size()<3) {
-							resultlist.add(getfacelist);
-						} else if(resultlist.size()==3){
-							resultlist.set(0, resultlist.get(1));
-							resultlist.set(1, resultlist.get(2));
-							resultlist.set(2, getfacelist);
+					System.out.println("辨識到faceId :"+faceId);
+						
+						//創建對應faceId的資料夾
+						String path = "D:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\"+faceId+"recfile";
+						System.out.println(path);
+						File file = new File(path);	
+						if (!file.exists()) {
+							if(GenerateFolder.mkDirectory(path)) {
+								System.out.println("成功創建"+faceId+"的資料夾");
+							} else {
+								System.out.println("創建資料夾失敗");
+							}
+						} else {
+							System.out.println("資料夾已經存在");
 						}
+						
+						
+						facepath = jsonobject.get("frameFace").getAsJsonObject().get("frameFacePath").getAsString();
+						String filename = StringUtils.substringAfter(facepath, "/");
+						File filepath = new File(path+"\\"+filename);
+						System.out.println("檔名為: "+filename);
+						if(resultmap.get(faceId) == null) {
+							facepathlist = new ArrayList<>();
+							facepathlist.add(facepath);
+							resultmap.put(faceId, facepathlist);
+							//移動檔案到那個資料夾
+//							if(!filepath.exists()) {
+//								movefile("D:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\"+facepath,path);
+//							}
+						} else {
+							if(resultmap.get(faceId).size()<=10) {
+								resultmap.get(faceId).add(facepath);
+							} else {
+								System.out.println("滿10個了 break");
+								break;
+							}
+//							if(!filepath.exists()) {
+//								movefile("D:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\"+facepath,path);
+//							}							
+						}
+						
+						
+//						getfacelist.add(faceId);
+//						getfacelist.add(facepath);
+//						if(resultlist.size()<3) {
+//							resultlist.add(getfacelist);
+//						} else if(resultlist.size()==3){
+//							resultlist.set(0, resultlist.get(1));
+//							resultlist.set(1, resultlist.get(2));
+//							resultlist.set(2, getfacelist);
+//						}
 //							Statement stmtcount = connect.createStatement();
 //							ResultSet rscount = stmtcount.executeQuery("SELECT * FROM `member_recognize`");
 //							int datacount = 0;
@@ -160,7 +250,7 @@ public class GetResult {
 //									pre2.executeUpdate();
 //								}
 //							}
-					}
+					
 				}
 			}
 			try {
@@ -176,7 +266,7 @@ public class GetResult {
 //				}
 			count++;
 		}
-		return resultlist;
+		return resultmap;
 	}
 
 	/**
@@ -331,5 +421,11 @@ public class GetResult {
 			}
 		}
 		return faceList;
+	}
+	
+	public static void movefile(String url, String toUrl)
+	{
+	    File file = new File(url);
+	    file.renameTo(new java.io.File(toUrl));
 	}
 }

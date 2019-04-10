@@ -10,6 +10,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.crypto.Data;
 
@@ -41,7 +42,7 @@ public class RetrieveController {
 	
 	@RequestMapping("/getresult")
 	@ResponseBody
-	public List<List<String>> home() throws SQLException {
+	public Map<String, List<String>> home() throws SQLException {
 		
 //		ModelAndView model = new ModelAndView("result");
 //		List<Member> memberlist = new ArrayList();
@@ -49,7 +50,7 @@ public class RetrieveController {
 //		ArrayList<String> resultstring = new ArrayList<>();
 //		memberlist = GetResult.main();
 //		model.addObject("members", memberlist);
-		List<List<String>> resultlist = GetResult.main();
+		Map<String, List<String>> resultlist = GetResult.train();
 		return resultlist;
 	}
 	
