@@ -42,7 +42,7 @@ public class RetrieveController {
 	
 	@RequestMapping("/getresult")
 	@ResponseBody
-	public Map<String, List<String>> home() throws SQLException {
+	public List<String> home() throws SQLException {
 		
 //		ModelAndView model = new ModelAndView("result");
 //		List<Member> memberlist = new ArrayList();
@@ -50,8 +50,21 @@ public class RetrieveController {
 //		ArrayList<String> resultstring = new ArrayList<>();
 //		memberlist = GetResult.main();
 //		model.addObject("members", memberlist);
-		Map<String, List<String>> resultlist = GetResult.train();
+		List<String> resultlist = GetResult.main();
+
 		return resultlist;
+	}
+	//重新訓練
+	@PostMapping("/retrain")
+	@ResponseBody
+	public Map<String, List<String>> retrain(@ModelAttribute String faceId) throws SQLException {
+		
+		Map<String, List<String>> resultmap = GetResult.train();
+		
+		for (String key : resultmap.keySet()) {
+            
+        }
+		return resultmap;
 	}
 	
 	@RequestMapping("/retrieveface")

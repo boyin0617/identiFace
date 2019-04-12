@@ -47,37 +47,37 @@ public class UploadingController {
     	String txtpath ="C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\list.txt";
     	int count = 0; //計算NO的個數
         //連接資料庫
-        Class.forName("com.mysql.cj.jdbc.Driver");
-		System.out.println("加載資料庫驅動");
-		String url = "jdbc:mysql://localhost:3306/project?serverTimezone=UTC";// 聲明資料庫project的url
-		String user = "root";// 資料庫帳號
-		String pass = "";// 資料庫密碼
-		// 建立資料庫連結，獲得連結對象conn
-		con = DriverManager.getConnection(url, user, pass);
-		st = con.createStatement();
-		
-		//資料庫抓值SELECT * FROM `Users` ORDER BY UserID DESC LIMIT 1
-		String query = "select * from face order by  faceId desc limit 1 ";
-		rs = st.executeQuery(query);
-		System.out.println("Records from DB");
-		System.out.println("faceId " +" imageId " + " name " + "age "   + "gender");
+//        Class.forName("com.mysql.cj.jdbc.Driver");
+//		System.out.println("加載資料庫驅動");
+//		String url = "jdbc:mysql://localhost:3306/project?serverTimezone=UTC";// 聲明資料庫project的url
+//		String user = "root";// 資料庫帳號
+//		String pass = "a8s5d1f9";// 資料庫密碼
+//		// 建立資料庫連結，獲得連結對象conn
+//		con = DriverManager.getConnection(url, user, pass);
+//		st = con.createStatement();
+//		
+//		//資料庫抓值SELECT * FROM `Users` ORDER BY UserID DESC LIMIT 1
+//		String query = "select * from face order by  faceId desc limit 1 ";
+//		rs = st.executeQuery(query);
+//		System.out.println("Records from DB");
+//		System.out.println("faceId " +" imageId " + " name " + "age "   + "gender");
 		trainResult trainresult = new trainResult();
-		while(rs.next()) {
-			String faceid = rs.getString("faceId");
-			String imageid = rs.getString("imageId");
-			String name = rs.getString("name");
-			String age = rs.getString("age");
-			String gender = rs.getString("gender");
-
-			
-			System.out.println(faceid+"         "  + imageid+"       " +   name+" "  + age +"  "+ gender);
-			
-			
-			int faceId = Integer.parseInt(faceid) +1;
-			
-			
-			System.out.println("last value" +faceId);
-		
+//		while(rs.next()) {
+//			String faceid = rs.getString("faceId");
+//			String imageid = rs.getString("imageId");
+//			String name = rs.getString("name");
+//			String age = rs.getString("age");
+//			String gender = rs.getString("gender");
+//
+//			
+//			System.out.println(faceid+"         "  + imageid+"       " +   name+" "  + age +"  "+ gender);
+//			
+//			
+//			int faceId = Integer.parseInt(faceid) +1;
+//			
+//			
+//			System.out.println("last value" +faceId);
+//		
 		ArrayList<String> filespath = new ArrayList<>();
         for(MultipartFile uploadedFile : uploadingFiles) {
             File file = new File(uploadingDir + uploadedFile.getOriginalFilename());
@@ -140,10 +140,10 @@ public class UploadingController {
 		
 		delFolderTxtFUNC.delAllFile("C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\face");
 		delFolderTxtFUNC.deltxt("C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\list.txt");		       
-    }
-		rs.close();
+    
+//		rs.close();
 	    return trainresult;
-    }
+}
     private static boolean trainFace(TrainFace trainFace){		
 		boolean flag = false;
 		// init func 

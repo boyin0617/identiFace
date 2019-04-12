@@ -3,10 +3,15 @@ package com.egroupai.engine.control;
 import java.io.BufferedReader;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.nio.channels.FileChannel;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
@@ -48,7 +53,7 @@ public class GetResult {
 		String cacheJsonName = "output.cache.egroup";
 		final Type faceListType = new TypeToken<ArrayList<Face>>() {
 		}.getType();
-		List<String> facepathlist = new ArrayList<>();
+		List<String> reclist = new ArrayList<>();
 		int hasfound = 0;
 		JsonArray jo = null;
 		String faceListstring = "";
@@ -71,7 +76,8 @@ public class GetResult {
 				if (hasfound == 1) {
 					faceId = jsonobject.get("personId").getAsString();
 					System.out.println("辨識到faceId :"+faceId);	
-					facepathlist.add(faceId);
+					if(!reclist.contains(faceId))
+						reclist.add(faceId);
 				}
 			}
 			try {
@@ -83,7 +89,7 @@ public class GetResult {
 			}
 			count++;
 		}
-		return facepathlist;
+		return reclist;
 	}
 	
 	public static Map<String, List<String>> train() throws SQLException {
@@ -159,16 +165,36 @@ public class GetResult {
 						
 						
 						facepath = jsonobject.get("frameFace").getAsJsonObject().get("frameFacePath").getAsString();
+						String facepath2 = facepath.replace('/', '\\');
 						String filename = StringUtils.substringAfter(facepath, "/");
 						File filepath = new File(path+"\\"+filename);
+						String tofilepath = path+"\\"+filename;
+						String fromfilepath = "D:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\"+facepath2;
 						System.out.println("檔名為: "+filename);
+						System.out.println("filepath為:"+filepath);
+						System.out.println("fromfilepath : "+fromfilepath);
+						System.out.println("tofilepath : "+tofilepath);
 						if(resultmap.get(faceId) == null) {
 							facepathlist = new ArrayList<>();
 							facepathlist.add(facepath);
 							resultmap.put(faceId, facepathlist);
 							//移動檔案到那個資料夾
 //							if(!filepath.exists()) {
-//								movefile("D:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\"+facepath,path);
+									System.out.println("開始複製");
+									Path sourcePath      = Paths.get(fromfilepath);
+									Path destinationPath = Paths.get(tofilepath);
+
+									try {
+									    Files.copy(sourcePath, destinationPath);
+									} catch(FileAlreadyExistsException e) {
+									    //destination file already exists
+									} catch (IOException e) {
+									    //something else went wrong
+									    e.printStackTrace();
+									}
+
+//							} else if(filepath.exists()) {
+//								System.out.println("filepath存在了");
 //							}
 						} else {
 							if(resultmap.get(faceId).size()<=10) {
@@ -177,9 +203,24 @@ public class GetResult {
 								System.out.println("滿10個了 break");
 								break;
 							}
+							//移動檔案到那個資料夾
 //							if(!filepath.exists()) {
-//								movefile("D:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\"+facepath,path);
-//							}							
+									System.out.println("開始複製");
+									Path sourcePath      = Paths.get(fromfilepath);
+									Path destinationPath = Paths.get(tofilepath);
+
+									try {
+									    Files.copy(sourcePath, destinationPath);
+									} catch(FileAlreadyExistsException e) {
+									    System.out.println("檔案已經存在");
+									} catch (IOException e) {
+									    System.out.println("出錯囉~~~~~~~~~~~~");
+									    e.printStackTrace();
+									}
+
+//							} else if(filepath.exists()) {
+//								System.out.println("filepath存在了");
+//							}			
 						}
 						
 						
@@ -423,9 +464,4 @@ public class GetResult {
 		return faceList;
 	}
 	
-	public static void movefile(String url, String toUrl)
-	{
-	    File file = new File(url);
-	    file.renameTo(new java.io.File(toUrl));
-	}
 }

@@ -24,34 +24,50 @@ import com.egroupai.engine.util.TxtUtil;
 
 @Controller
 public class TrainController {
-	@PostMapping("/trainface")
-    public ModelAndView TrainForm(@ModelAttribute("name") String name) {
-	       ModelAndView model = new ModelAndView("main");
-	       model.addObject("name", name);
-
-	       return model;
-
-	    }
-    @ResponseBody
-    	void home() throws SQLException {
-		// TODO Auto-generated method stub
-		String ENGINEPATH = "C:\\eGroupAI_FaceEngine_v3.1.0";
-		
-		TrainFace trainFace = new TrainFace();
-		trainFace.setModelExist(false);
-		trainFace.setTrainListPath("list.txt");
-		trainFace.setModelPath("eGroupTest\\eGroupTest.Model");
-		trainFace(trainFace);
-		}
+//	@PostMapping("/trainface")
+//    public ModelAndView TrainForm(@ModelAttribute("name") String name) {
+//	       ModelAndView model = new ModelAndView("main");
+//	       model.addObject("name", name);
+//
+//	       return model;
+//
+//	    }
+//    @ResponseBody
+//    	void home() throws SQLException {
+//		// TODO Auto-generated method stub
+//		String ENGINEPATH = "C:\\eGroupAI_FaceEngine_v3.1.0";
+//		
+//		TrainFace trainFace = new TrainFace();
+//		trainFace.setModelExist(false);
+//		trainFace.setTrainListPath("list.txt");
+//		trainFace.setModelPath("eGroupTest\\eGroupTest.Model");
+//		trainFace(trainFace);
+//		}
+//	
+//		private static boolean trainFace(TrainFace trainFace){		
+//			boolean flag = false;
+//			// init func 
+//			trainFace.generateCli();
+//			if(trainFace.getCommandList()!=null){
+//				final CmdUtil cmdUtil = new CmdUtil();
+//				flag = cmdUtil.cmdProcessBuilder(trainFace.getCommandList());				
+//			}
+//			return flag;
+//		}
 	
-		private static boolean trainFace(TrainFace trainFace){		
-			boolean flag = false;
-			// init func 
-			trainFace.generateCli();
-			if(trainFace.getCommandList()!=null){
-				final CmdUtil cmdUtil = new CmdUtil();
-				flag = cmdUtil.cmdProcessBuilder(trainFace.getCommandList());				
-			}
-			return flag;
+	@RequestMapping("/trainface")
+	@ResponseBody
+	public String[] selecttenpic(){
+		System.out.println("trainface");
+		String path = "D:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\outputface";
+		File file = new File(path);
+		String[] allfiles = file.list();
+		for(int i = 0; i < allfiles.length;i++) {
+			System.out.println(allfiles[i]);
 		}
+		return allfiles;
+	}
+                
 }
+
+
