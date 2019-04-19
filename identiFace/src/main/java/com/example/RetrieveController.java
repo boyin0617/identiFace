@@ -59,7 +59,7 @@ public class RetrieveController {
 	@ResponseBody
 	public Map<String, List<String>> retrain(@ModelAttribute String faceId) throws SQLException {
 		
-		Map<String, List<String>> resultmap = GetResult.train();
+		Map<String, List<String>> resultmap = GetResult.retrain();
 		
 		for (String key : resultmap.keySet()) {
             

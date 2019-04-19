@@ -45,9 +45,9 @@ import java.sql.*;
  */
 public class GetResult {
 	static protected String ENGINEPATH = "D:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN";
-	
-	public static List<String> main() throws SQLException {
 
+	// 一般抓結果
+	public static List<String> main() throws SQLException {
 
 		List<Face> faceList = new ArrayList<>();
 		String cacheJsonName = "output.cache.egroup";
@@ -59,7 +59,7 @@ public class GetResult {
 		String faceListstring = "";
 		int count = 0;
 
-		while (count<5) {
+		while (count < 5) {
 			long startTime = System.currentTimeMillis();
 			faceList = getCacheResult(ENGINEPATH, cacheJsonName);
 //			System.out.println("Get Json Using Time:" + (System.currentTimeMillis() - startTime) + " ms,faceList="
@@ -70,13 +70,13 @@ public class GetResult {
 			Gson gson = new Gson();
 			String faceId = "";
 			jo = gson.fromJson(faceListstring, JsonArray.class);
-			for (int i = jo.size()-1; i >= 0; i--) {
+			for (int i = jo.size() - 1; i >= 0; i--) {
 				JsonObject jsonobject = jo.get(i).getAsJsonObject();
 				hasfound = jsonobject.get("hasFound").getAsInt();
 				if (hasfound == 1) {
 					faceId = jsonobject.get("personId").getAsString();
-					System.out.println("辨識到faceId :"+faceId);	
-					if(!reclist.contains(faceId))
+					System.out.println("辨識到faceId :" + faceId);
+					if (!reclist.contains(faceId))
 						reclist.add(faceId);
 				}
 			}
@@ -91,14 +91,15 @@ public class GetResult {
 		}
 		return reclist;
 	}
-	
-	public static Map<String, List<String>> train() throws SQLException {
+
+	// 重新訓練用的(讀結果，複製照片到...資料夾)
+	public static Map<String, List<String>> retrain() throws SQLException {
 
 		// 取得Real-time結果
 		Member member = new Member();
 		MemberRec memberrec = new MemberRec();
 		List<Face> faceList = new ArrayList<>();
-		//改參數
+		// 改參數
 		List<Member> memberlist = new ArrayList<>(3);
 		String cacheJsonName = "output.cache.egroup";
 		final Type faceListType = new TypeToken<ArrayList<Face>>() {
@@ -106,26 +107,13 @@ public class GetResult {
 		List<String> allfacelist = new ArrayList<>();
 		List<String> facepathlist = new ArrayList<>();
 		List<List<String>> resultlist = new ArrayList<>();
-		Map<String,List<String>> resultmap = new HashMap<>();
+		Map<String, List<String>> resultmap = new HashMap<>();
 		int hasfound = 0;
 		JsonArray jo = null;
 		String faceListstring = "";
 		int count = 0;
-//			Class.forName("com.mysql.cj.jdbc.Driver");
-//			System.out.println("加載資料庫驅動");
-//			String url="jdbc:mysql://localhost:3306/identiface?autoReconnect=true&useSSL=false&serverTimezone=UTC";//声明数据库project的url  
-//			String url="jdbc:mysql://140.136.155.124/identiface?autoReconnect=true&useSSL=false&serverTimezone=UTC";
-//			String user="identiFace";//数据库账号  
-//			String pass = "Faceidenti";
-//			String user="root";
-//			String pass="a8s5d1f9";//数据库密码
-		// 建立資料庫連結，獲得連結對象conn
-//			Connection connect = DriverManager.getConnection(url, user, pass);
-//			System.out.println("資料庫連接成功");
-//			Statement stmt = connect.createStatement();
-//			stmt.executeUpdate("DELETE FROM `member_recognize`");
 		// Get Real-time data
-		while (count<5) {
+		while (count < 5) {
 			long startTime = System.currentTimeMillis();
 			faceList = getCacheResult(ENGINEPATH, cacheJsonName);
 //			System.out.println("Get Json Using Time:" + (System.currentTimeMillis() - startTime) + " ms,faceList="
@@ -142,88 +130,78 @@ public class GetResult {
 			String faceId = "";
 			Date birth = new Date();
 			jo = gson.fromJson(faceListstring, JsonArray.class);
-			for (int i = jo.size()-1; i >= 0; i--) {
+			for (int i = jo.size() - 1; i >= 0; i--) {
 				JsonObject jsonobject = jo.get(i).getAsJsonObject();
 				hasfound = jsonobject.get("hasFound").getAsInt();
 				if (hasfound == 1) {
 					faceId = jsonobject.get("personId").getAsString();
-					System.out.println("辨識到faceId :"+faceId);
-						
-						//創建對應faceId的資料夾
-						String path = "D:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\"+faceId+"recfile";
-						System.out.println(path);
-						File file = new File(path);	
-						if (!file.exists()) {
-							if(GenerateFolder.mkDirectory(path)) {
-								System.out.println("成功創建"+faceId+"的資料夾");
-							} else {
-								System.out.println("創建資料夾失敗");
-							}
+					System.out.println("辨識到faceId :" + faceId);
+
+					// 創建對應faceId的資料夾
+					String path = "D:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\" + faceId + "recfile";
+					System.out.println(path);
+					File file = new File(path);
+					if (!file.exists()) {
+						if (GenerateFolder.mkDirectory(path)) {
+							System.out.println("成功創建" + faceId + "的資料夾");
 						} else {
-							System.out.println("資料夾已經存在");
+							System.out.println("創建資料夾失敗");
 						}
-						
-						
-						facepath = jsonobject.get("frameFace").getAsJsonObject().get("frameFacePath").getAsString();
-						String facepath2 = facepath.replace('/', '\\');
-						String filename = StringUtils.substringAfter(facepath, "/");
-						File filepath = new File(path+"\\"+filename);
-						String tofilepath = path+"\\"+filename;
-						String fromfilepath = "D:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\"+facepath2;
-						System.out.println("檔名為: "+filename);
-						System.out.println("filepath為:"+filepath);
-						System.out.println("fromfilepath : "+fromfilepath);
-						System.out.println("tofilepath : "+tofilepath);
-						if(resultmap.get(faceId) == null) {
-							facepathlist = new ArrayList<>();
-							facepathlist.add(facepath);
-							resultmap.put(faceId, facepathlist);
-							//移動檔案到那個資料夾
-//							if(!filepath.exists()) {
-									System.out.println("開始複製");
-									Path sourcePath      = Paths.get(fromfilepath);
-									Path destinationPath = Paths.get(tofilepath);
+					} else {
+						System.out.println("資料夾已經存在");
+					}
 
-									try {
-									    Files.copy(sourcePath, destinationPath);
-									} catch(FileAlreadyExistsException e) {
-									    //destination file already exists
-									} catch (IOException e) {
-									    //something else went wrong
-									    e.printStackTrace();
-									}
+					facepath = jsonobject.get("frameFace").getAsJsonObject().get("frameFacePath").getAsString();
+					String facepath2 = facepath.replace('/', '\\');
+					String filename = StringUtils.substringAfter(facepath, "/");
+					File filepath = new File(path + "\\" + filename);
+					String tofilepath = path + "\\" + filename;
+					String fromfilepath = "D:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\" + facepath2;
+					System.out.println("檔名為: " + filename);
+					System.out.println("filepath為:" + filepath);
+					System.out.println("fromfilepath : " + fromfilepath);
+					System.out.println("tofilepath : " + tofilepath);
+					if (resultmap.get(faceId) == null) {
+						facepathlist = new ArrayList<>();
+						facepathlist.add(facepath);
+						resultmap.put(faceId, facepathlist);
+						// 移動檔案到那個資料夾
+						System.out.println("開始複製");
+						Path sourcePath = Paths.get(fromfilepath);
+						Path destinationPath = Paths.get(tofilepath);
 
-//							} else if(filepath.exists()) {
-//								System.out.println("filepath存在了");
-//							}
+						try {
+							Files.copy(sourcePath, destinationPath);
+						} catch (FileAlreadyExistsException e) {
+							// destination file already exists
+						} catch (IOException e) {
+							// something else went wrong
+							e.printStackTrace();
+						}
+
+					} else {
+						if (resultmap.get(faceId).size() <= 10) {
+							resultmap.get(faceId).add(facepath);
 						} else {
-							if(resultmap.get(faceId).size()<=10) {
-								resultmap.get(faceId).add(facepath);
-							} else {
-								System.out.println("滿10個了 break");
-								break;
-							}
-							//移動檔案到那個資料夾
-//							if(!filepath.exists()) {
-									System.out.println("開始複製");
-									Path sourcePath      = Paths.get(fromfilepath);
-									Path destinationPath = Paths.get(tofilepath);
-
-									try {
-									    Files.copy(sourcePath, destinationPath);
-									} catch(FileAlreadyExistsException e) {
-									    System.out.println("檔案已經存在");
-									} catch (IOException e) {
-									    System.out.println("出錯囉~~~~~~~~~~~~");
-									    e.printStackTrace();
-									}
-
-//							} else if(filepath.exists()) {
-//								System.out.println("filepath存在了");
-//							}			
+							System.out.println("滿10個了 break");
+							break;
 						}
-						
-						
+						// 移動檔案到那個資料夾
+//							if(!filepath.exists()) {
+						System.out.println("開始複製");
+						Path sourcePath = Paths.get(fromfilepath);
+						Path destinationPath = Paths.get(tofilepath);
+
+						try {
+							Files.copy(sourcePath, destinationPath);
+						} catch (FileAlreadyExistsException e) {
+							System.out.println("檔案已經存在");
+						} catch (IOException e) {
+							System.out.println("出錯囉~~~~~~~~~~~~");
+							e.printStackTrace();
+						}
+					}
+
 //						getfacelist.add(faceId);
 //						getfacelist.add(facepath);
 //						if(resultlist.size()<3) {
@@ -244,7 +222,7 @@ public class GetResult {
 //							}
 //							rscount.close();
 //							System.out.println("datacount = "+datacount);
-						// 去資料庫找人
+					// 去資料庫找人
 //							Statement stmtrs = connect.createStatement();
 //							ResultSet rs = stmtrs.executeQuery("SELECT * FROM `face` WHERE `name` LIKE '" + name + "'");
 //							while (rs.next()) {
@@ -291,7 +269,7 @@ public class GetResult {
 //									pre2.executeUpdate();
 //								}
 //							}
-					
+
 				}
 			}
 			try {
@@ -301,10 +279,6 @@ public class GetResult {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-//				for (int i = 0; i < memberlist.size(); i++) {
-//					System.out.println("第" + (i + 1) + "個,名字 :" + memberlist.get(i).getName() + ", faceid :"
-//							+ memberlist.get(i).getFaceId() + ", email :" + memberlist.get(i).getEmail());
-//				}
 			count++;
 		}
 		return resultmap;
@@ -463,5 +437,5 @@ public class GetResult {
 		}
 		return faceList;
 	}
-	
+
 }

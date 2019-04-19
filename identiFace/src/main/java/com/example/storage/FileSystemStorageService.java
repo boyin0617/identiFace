@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 public class FileSystemStorageService implements StorageService
 {
 
-    private final Path rootLocation = Paths.get("upload-dir");
+    private final Path rootLocation = Paths.get("D:\\Git\\repository\\identiFace\\upload-dir");
 
 
     /**

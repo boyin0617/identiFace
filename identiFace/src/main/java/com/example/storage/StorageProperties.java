@@ -6,9 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class StorageProperties {
 	  // we can setup location here
 
-    private String location = "d:\\testupload";
-
-    //private String location = "d:\testupload";
+    private String location = "D:\\Git\\repository\\identiFace\\upload-dir";
 
     public String getLocation() {
 
