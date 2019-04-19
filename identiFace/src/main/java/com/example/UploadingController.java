@@ -1,26 +1,46 @@
 package com.example;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
+
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import com.egroupai.engine.entity.TrainFace;
 import com.egroupai.engine.util.CmdUtil;
-import com.example.GetFileSize;
-import com.example.TrainingController;
-import com.example.delFolderTxtFUNC;
+import com.example.GetByFaceId;
 import com.example.entity.trainResult;
+import com.example.function.CreateTxtPath;
+import com.example.function.GetFileSize;
+import com.example.function.delFolderTxtFUNC;
+import com.example.storage.StorageFileNotFoundException;
+import com.example.storage.StorageService;
+import com.example.FileUploadController;
 @Controller
 public class UploadingController {
 	
@@ -41,53 +61,19 @@ public class UploadingController {
         return "upload";
     }
 
+    //手動訓練
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
-    @ResponseBody
-    public trainResult uploadingPost(@RequestParam("uploadingFiles") MultipartFile[] uploadingFiles) throws Exception {
+    public String uploadingPost(@RequestParam("uploadingFiles") MultipartFile[] uploadingFiles,@RequestParam("faceId") String faceId) throws Exception {
     	String txtpath ="C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\list.txt";
     	int count = 0; //計算NO的個數
-        //連接資料庫
-//        Class.forName("com.mysql.cj.jdbc.Driver");
-//		System.out.println("加載資料庫驅動");
-//		String url = "jdbc:mysql://localhost:3306/project?serverTimezone=UTC";// 聲明資料庫project的url
-//		String user = "root";// 資料庫帳號
-//		String pass = "a8s5d1f9";// 資料庫密碼
-//		// 建立資料庫連結，獲得連結對象conn
-//		con = DriverManager.getConnection(url, user, pass);
-//		st = con.createStatement();
-//		
-//		//資料庫抓值SELECT * FROM `Users` ORDER BY UserID DESC LIMIT 1
-//		String query = "select * from face order by  faceId desc limit 1 ";
-//		rs = st.executeQuery(query);
-//		System.out.println("Records from DB");
-//		System.out.println("faceId " +" imageId " + " name " + "age "   + "gender");
-		trainResult trainresult = new trainResult();
-//		while(rs.next()) {
-//			String faceid = rs.getString("faceId");
-//			String imageid = rs.getString("imageId");
-//			String name = rs.getString("name");
-//			String age = rs.getString("age");
-//			String gender = rs.getString("gender");
-//
-//			
-//			System.out.println(faceid+"         "  + imageid+"       " +   name+" "  + age +"  "+ gender);
-//			
-//			
-//			int faceId = Integer.parseInt(faceid) +1;
-//			
-//			
-//			System.out.println("last value" +faceId);
-//		
+    	
 		ArrayList<String> filespath = new ArrayList<>();
         for(MultipartFile uploadedFile : uploadingFiles) {
             File file = new File(uploadingDir + uploadedFile.getOriginalFilename());
             //System.out.println(uploadedFile.getOriginalFilename());
             filespath.add(uploadedFile.getOriginalFilename());
             System.out.println("讀檔");
-            count++;
-            //uploadedFile.transferTo(file);
-            
-            
+            count++;        
         
     	//抓檔案個數
         GetFileSize g = new GetFileSize();
@@ -115,8 +101,8 @@ public class UploadingController {
       String result = CreateTxtPath.readTxtFile(txtpath);
      
       }
-        trainresult.setId("testid");
-        trainresult.setPaths(filespath);
+//        trainresult.setId("testid");
+//        trainresult.setPaths(filespath);
      
 //        File judgeFolderNotNull = new File("C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\eGroup");  // 当前目录下的 testdir目录
 //        TrainFace trainFace = new TrainFace();
@@ -141,9 +127,14 @@ public class UploadingController {
 		delFolderTxtFUNC.delAllFile("C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\face");
 		delFolderTxtFUNC.deltxt("C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\list.txt");		       
     
-//		rs.close();
-	    return trainresult;
-}
+		rs.close();		
+		
+		//導到 /file Controller
+	    return "redirect:/file";
+    }
+    
+    
+    
     private static boolean trainFace(TrainFace trainFace){		
 		boolean flag = false;
 		// init func 
@@ -154,6 +145,4 @@ public class UploadingController {
 		}
 		return flag;
 	}
-
-
 }

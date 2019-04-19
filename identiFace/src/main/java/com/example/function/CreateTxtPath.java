@@ -1,4 +1,4 @@
-package com.example;
+package com.example.function;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;

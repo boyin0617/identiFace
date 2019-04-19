@@ -3,6 +3,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,17 +12,23 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.*;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.example.entity.Customer;
-import com.example.CreateTxtPath;
+import com.example.function.CreateTxtPath;
  
 @Controller
-public class TrainingController {
+public class GetByFaceId {
 	
 	//上傳檔案
 	static String folderPath = "C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN";
@@ -34,13 +41,13 @@ public class TrainingController {
 	
     Logger log = LoggerFactory.getLogger(this.getClass());
      
-    @RequestMapping(value="/train", method=RequestMethod.GET)
+    @RequestMapping(value="/getbyfaceid", method=RequestMethod.GET)
     public String CustomerForm(Model model) {
         model.addAttribute("Customer", new Customer());   
         return "train";
     }
  
-    @RequestMapping(value="/train", method=RequestMethod.POST)
+    @RequestMapping(value="/getbyfaceid", method=RequestMethod.POST)
     public String CustomerSubmit(@ModelAttribute Customer Customer, Model model) throws IOException, SQLException, ClassNotFoundException {
          
         model.addAttribute("Customer", Customer);
@@ -86,12 +93,5 @@ public class TrainingController {
         return "result_train";
         }
 		return query;
-    }
-    
-    
-    
-    
-    
-    
-    
+    }   
 }

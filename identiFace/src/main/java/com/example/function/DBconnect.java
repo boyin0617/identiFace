@@ -1,4 +1,4 @@
-package com.example;
+package com.example.function;
 
 import java.sql.*;
 
@@ -31,7 +31,7 @@ public class DBconnect {
 		}
 		
 	}
-	public void getData(String  id) {
+	public void getData(String id) {
 		try {
 			String query = "select * from face where faceId Like '"+ id + "' ";
 			rs = st.executeQuery(query);

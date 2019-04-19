@@ -25,7 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.egroupai.engine.entity.Face;
 import com.egroupai.engine.util.CopyUtil;
-import com.example.GenerateFolder;
+import com.example.function.GenerateFolder;
 import com.example.entity.Member;
 import com.example.entity.MemberRec;
 import com.google.gson.Gson;

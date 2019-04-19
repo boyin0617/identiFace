@@ -39,11 +39,11 @@ import com.mysql.cj.x.protobuf.MysqlxDatatypes.Array;
 
 @Controller
 public class TrainController {
-
+	
+	//將辨識擷取的照片傳10張到專案裡的upload-dir，回傳檔名陣列
 	@GetMapping("/showfaces")
 	@ResponseBody
 	public List<String> selecttenpic(){
-		System.out.println("trainface");
 		String path = "D:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\outputface\\" ;
 		File file = new File(path);
 		String[] allfiles = file.list();
@@ -59,8 +59,9 @@ public class TrainController {
 
 			try {
 				Files.copy(sourcePath, destinationPath);
+				urllist.add(allfiles[i]);
 			} catch (FileAlreadyExistsException e) {
-				// destination file already exists
+				System.out.println("檔案已經存在");
 			} catch (IOException e) {
 				// something else went wrong
 				e.printStackTrace();
@@ -69,18 +70,10 @@ public class TrainController {
 		    count++;
 		    
 				if(count == 10) {
-//					is.close();
 					break;
 				}
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			
 		}
 		return urllist;
 	}
                 
 }
-
-
