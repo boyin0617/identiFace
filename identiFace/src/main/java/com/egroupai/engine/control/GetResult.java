@@ -47,7 +47,7 @@ public class GetResult {
 	static protected String ENGINEPATH = "D:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN";
 
 	// 一般抓結果
-	public static List<String> main() throws SQLException {
+	public static List<String> main(){
 
 		List<Face> faceList = new ArrayList<>();
 		String cacheJsonName = "output.cache.egroup";
@@ -93,7 +93,7 @@ public class GetResult {
 	}
 
 	// 重新訓練用的(讀結果，複製照片到...資料夾)
-	public static Map<String, List<String>> retrain() throws SQLException {
+	public static Map<String, List<String>> retrain(){
 
 		// 取得Real-time結果
 		Member member = new Member();

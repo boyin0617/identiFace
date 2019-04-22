@@ -63,6 +63,7 @@ public class UploadingController {
 
     //手動訓練
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
+    @ResponseBody
     public String uploadingPost(@RequestParam("uploadingFiles") MultipartFile[] uploadingFiles,@RequestParam("faceId") String faceId) throws Exception {
     	String txtpath ="C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\list.txt";
     	int count = 0; //計算NO的個數
@@ -130,7 +131,7 @@ public class UploadingController {
 		rs.close();		
 		
 		//導到 /file Controller
-	    return "redirect:/file";
+	    return "redirect:/deletefiles";
     }
     
     
