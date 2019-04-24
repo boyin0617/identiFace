@@ -51,10 +51,10 @@ public class delFolderTxtFUNC {
 		for (int i = 0; i < tempList.length; i++) {
 			if (path.endsWith(File.separator)) {
 				temp = new File(path + tempList[i]);
-				System.out.println("111"+path + tempList[i]);
+//				System.out.println("111"+path + tempList[i]);
 			} else {
 				temp = new File(path + File.separator + tempList[i]);
-				System.out.println("222"+path + File.separator + tempList[i]);
+//				System.out.println("222"+path + File.separator + tempList[i]);
 			}
 			
 			if (temp.isFile()) {

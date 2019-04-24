@@ -106,6 +106,16 @@ public class TrainController {
 //		}
 		return resultlist;
 	}
+	
+	@CrossOrigin
+	@PostMapping("/getheadshot")
+	@ResponseBody
+	public String getHeadShot(@ModelAttribute("faceId") String faceId) {
+		System.out.println("faceId : " + faceId);
+		faceId += ".jpg";
+		return faceId;
+	}
+	
     
 	static protected String ENGINEPATH = "D:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN";
 

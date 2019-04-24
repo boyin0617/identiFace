@@ -32,6 +32,7 @@ import com.egroupai.engine.util.TxtUtil;
 import com.example.entity.Customer;
 import com.example.entity.Member;
 import com.example.function.GenerateFolder;
+import com.example.util.TerminateUtil;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -88,6 +89,20 @@ public class RetrieveController {
 		retrieveFace(retrieveFace);
 		return "redirect:/";		
 	}
+	
+	 //關鏡頭
+	 @RequestMapping(value = "/terminate", method = RequestMethod.GET)
+	  public void terminateEngine(){
+	   
+	   terminateRetrieveProcess("RetrieveFace.exe");
+	
+	  }
+	  // terminate
+	  protected static void terminateRetrieveProcess(String processName) {
+	   final TerminateUtil  terminate = new TerminateUtil();
+	   terminate.cmdProcessTerminate(processName);  
+	   System.out.println("Terminate process="+processName);
+	  }
 	
 	//前端輸入faceId，創faceId資料夾，開鏡頭，辨識的照片存在faceId資料夾
 	@PostMapping("/retrieveface/withfaceId")

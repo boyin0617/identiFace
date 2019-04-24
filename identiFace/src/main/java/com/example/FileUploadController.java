@@ -41,7 +41,7 @@ public class FileUploadController {
         this.storageService = storageService;  
     }
     
-    @CrossOrigin(origins="http://140.136.155.124:3000")
+    @CrossOrigin
     @GetMapping("/file")
     @ResponseBody
     public  List<String> listUploadedFiles() throws IOException {
@@ -77,7 +77,7 @@ public class FileUploadController {
     //選10張照片，複製到專案裡的upload-dir
     public static void selectTenPics(){
     	  System.out.println("trainface");
-    	  String path = "C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\face\\" ;
+    	  String path = "D:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\outputface\\" ;
     	  File file = new File(path);
     	  String[] allfiles = file.list();
     	  int count = 0;
@@ -87,7 +87,7 @@ public class FileUploadController {
     	   System.out.println(path+allfiles[i]);
     	   
     	   Path sourcePath = Paths.get(path+allfiles[i]);
-    	   Path destinationPath = Paths.get("C:\\Users\\Yan\\Downloads\\identiFace-master\\identiFace\\upload-dir\\"+allfiles[i]);
+    	   Path destinationPath = Paths.get("D:\\Git\\repository\\identiFace\\upload-dir\\"+allfiles[i]);
 
     	   try {
     	    Files.copy(sourcePath, destinationPath);

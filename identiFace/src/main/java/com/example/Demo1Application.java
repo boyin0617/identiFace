@@ -14,6 +14,6 @@ public class Demo1Application {
 
 	public static void main(String[] args) {
 		SpringApplication.run(Demo1Application.class, args);
-		new File(UploadingController.uploadingDir).mkdirs();
+		new File(ReturnTrainController.uploadingDir).mkdirs();
 	}
 }
