@@ -92,6 +92,7 @@ public class RetrieveController {
 	
 	 //關鏡頭
 	 @RequestMapping(value = "/terminate", method = RequestMethod.GET)
+	 @ResponseBody
 	  public void terminateEngine(){
 	   
 	   terminateRetrieveProcess("RetrieveFace.exe");

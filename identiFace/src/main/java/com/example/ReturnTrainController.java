@@ -59,7 +59,7 @@ public class ReturnTrainController {
 
 
 	// 手動訓練
-	@RequestMapping(value = "/upload", method = RequestMethod.POST)
+	@RequestMapping(value = "/returntrain", method = RequestMethod.POST)
 	@ResponseBody
 	public String uploadingPost(@RequestBody List<String> uploadingFiles) throws Exception {
 		String txtpath = "D:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\list.txt";
@@ -98,7 +98,7 @@ public class ReturnTrainController {
 			
 			// 寫入TXT檔值
 			String content1 = uploaddir + uploadingFiles.get(i) + "	"
-					+ faceId + "[No]" + count*200 + "\r\n";
+					+ faceId + "[No]" + count + "\r\n";
 			boolean flagcreate = CreateTxtPath.createTxtFile(txtpath);
 			boolean flagwrite = CreateTxtPath.writeTxtFileAppend(txtpath, content1);
 			String result = CreateTxtPath.readTxtFile(txtpath);

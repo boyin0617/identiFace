@@ -9,14 +9,14 @@ public class practice {
   */
  public static void main(String[] args) {
   // TODO Auto-generated method stub
-  double w = 60, h =1.7;
-  double x = bmi(w,h);
-  System.out.println("w = "+w);
-  System.out.println("h = "+h);
-  System.out.println("bmi = " +x);
-  }
-  static double bmi(double w, double h){
-  return w / (h*h);
-  }
-
- }
+//	 class B {
+//		 int a;
+//		 public int fun()
+//		 {return a;}}
+//		 public class a{
+//		 public static void main(String[] args){
+//		 B b=new B();
+//		 int y=b.fun();
+//		 System.out.println(y);}}
+}
+}
