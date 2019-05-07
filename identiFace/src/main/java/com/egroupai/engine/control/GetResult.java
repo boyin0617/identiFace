@@ -44,7 +44,7 @@ import java.sql.*;
  * @description:
  */
 public class GetResult {
-	static protected String ENGINEPATH = "D:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN";
+	static protected String ENGINEPATH = "C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN";
 
 	// 一般抓結果
 	public static List<String> main(){
@@ -138,7 +138,7 @@ public class GetResult {
 					System.out.println("辨識到faceId :" + faceId);
 
 					// 創建對應faceId的資料夾
-					String path = "D:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\" + faceId + "recfile";
+					String path = "C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\" + faceId + "recfile";
 					System.out.println(path);
 					File file = new File(path);
 					if (!file.exists()) {
@@ -156,7 +156,7 @@ public class GetResult {
 					String filename = StringUtils.substringAfter(facepath, "/");
 					File filepath = new File(path + "\\" + filename);
 					String tofilepath = path + "\\" + filename;
-					String fromfilepath = "D:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\" + facepath2;
+					String fromfilepath = "C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\" + facepath2;
 					System.out.println("檔名為: " + filename);
 					System.out.println("filepath為:" + filepath);
 					System.out.println("fromfilepath : " + fromfilepath);

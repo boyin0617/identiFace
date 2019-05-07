@@ -59,7 +59,7 @@ public class TrainController {
 		delFolderTxtFUNC.delAllFile("D:\\Git\\repository\\identiFace\\upload-dir\\");
 		List<List<String>> resultlist = new ArrayList<>();
 		resultlist = getLastTen();
-		String path = "D:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\outputface\\" ;
+		String path = "C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\outputface\\" ;
 		for(int i = 0;i < resultlist.size();i++) {
 			System.out.println(resultlist.get(i).get(0)+" --- "+resultlist.get(i).get(1));
 			Path sourcePath = Paths.get(path+resultlist.get(i).get(1));
@@ -107,7 +107,7 @@ public class TrainController {
 		return resultlist;
 	}	
     
-	static protected String ENGINEPATH = "D:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN";
+	static protected String ENGINEPATH = "C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN";
 
 	// 抓結果
 	public static List<List<String>> getLastTen(){

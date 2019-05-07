@@ -29,7 +29,7 @@ import java.sql.*;
 * @description:
  */
 public class EngineFunc{
-	static protected String ENGINEPATH = "D:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN";
+	static protected String ENGINEPATH = "C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN";
 	public static void main(String args[]) throws IOException, SQLException {
 		String  binarypath = "";
 		String  faceInforpath = "";
