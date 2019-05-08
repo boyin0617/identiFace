@@ -8,6 +8,6 @@ public class practice {
   * @param args
   */
  public static void main(String[] args) {
-//6666666666666666666666666666666666666666666666666666666666666666
+//87喔
 }
 }
