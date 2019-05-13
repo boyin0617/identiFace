@@ -33,7 +33,7 @@ public class GetByFaceId {
 	static String folderPath = "C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN";
     public static final String uploadingDir =  folderPath + "/uploadingDir/";
 
-//    //資料庫參數
+    //資料庫參數
 	private Connection con;
 	private Statement st;
 	private ResultSet rs;
