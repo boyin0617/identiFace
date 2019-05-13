@@ -40,7 +40,7 @@ public class AutoTrainController {
 	static String folderPath = "C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN";
     public static final String uploadingDir =  folderPath + "/face/";
 
-    @RequestMapping("/autoupload")
+    @RequestMapping("/autoupload/train")
     public String uploading(Model model) {
         File file = new File(uploadingDir);
         

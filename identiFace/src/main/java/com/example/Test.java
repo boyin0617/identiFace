@@ -57,13 +57,13 @@ import com.google.gson.reflect.TypeToken;
 import com.example.FileUploadController;
 
 @Controller
-public class ReturnTrainController {
+public class Test {
 
 	static String folderPath = "C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN";
 	public static final String uploadingDir = folderPath + "/outputface/";
 
-	// 先用圖片辨識檢查有沒有訓練過此人，沒有的話訓練此人
-	@RequestMapping(value = "/showfaces/train", method = RequestMethod.POST)
+	// 手動訓練
+	@RequestMapping(value = "/test", method = RequestMethod.POST)
 	@ResponseBody
 	public String uploadingPost(@RequestBody List<String> uploadingFiles) throws Exception {
 		String ENGINEPATH = "C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN";

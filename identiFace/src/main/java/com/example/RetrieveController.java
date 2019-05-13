@@ -91,7 +91,7 @@ public class RetrieveController {
 	}
 	
 	 //關鏡頭
-	 @RequestMapping(value = "/terminate", method = RequestMethod.GET)
+	 @RequestMapping(value = "/retrieveface/terminate", method = RequestMethod.GET)
 	 @ResponseBody
 	  public void terminateEngine(){
 	   
@@ -108,7 +108,7 @@ public class RetrieveController {
 	//前端輸入faceId，創faceId資料夾，開鏡頭，辨識的照片存在faceId資料夾
 	@PostMapping("/retrieveface/withfaceId")
 	public String RetrieveFace(@ModelAttribute("faceid") String faceId) throws ClassNotFoundException, SQLException {
-		 String ENGINEPATH = "D:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN";	 
+		 String ENGINEPATH = "C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN";	 
 		 
 			// 取得Real-time結果
 			List<Face> faceList = new ArrayList<>();
