@@ -1,6 +1,5 @@
 package com.example;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,8 +37,6 @@ public class GetByFaceId {
 	private Connection con;
 	private Statement st;
 	private ResultSet rs;
-	
-    Logger log = LoggerFactory.getLogger(this.getClass());
      
     @RequestMapping(value="/getbyfaceid", method=RequestMethod.GET)
     public String CustomerForm(Model model) {
