@@ -19,7 +19,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.FileAlreadyExistsException;
@@ -147,9 +149,6 @@ public class ReturnTrainController {
 		new File("C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\headshot\\" + headshot)
 				.renameTo(new File("C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\headshot\\" + faceId + ".jpg"));
 
-		// 讀剩下的照片
-		// for (int j = 1; j < uploadingFiles.size(); j++) {
-		//File file = new File(uploaddir + uploadingFiles.get(i));
 		for(int i = 1;i < uploadingFiles.size();i++) {
 		System.out.println("讀檔");
 		count++;
@@ -192,12 +191,42 @@ public class ReturnTrainController {
 //		} catch (InterruptedException e) {
 //			e.printStackTrace();
 //		}
-
+	//2019-05-14 02:12:22	Fail	FileNotFound	C:\eGroupAI_FaceEngine_CPU_V3.1.3_SN\headshot\533.jpg	boyin[No]1
+	//2019-05-14 02:13:29	Pass	C:\eGroupAI_FaceEngine_CPU_V3.1.3_SN\headshot\5.jpg	boyin[No]1
+		//讀取trainResult的log檔看有沒有訓練成功
+		int success = 0;
+		try {
+		File file = new File("C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\Log.TrainResultCPU.eGroup");
+		FileReader fr = new FileReader(file);
+		BufferedReader br = new BufferedReader(fr);
+		int traincount = 0;
+		String trainresult = null;
+		while ((trainresult = br.readLine())!=null) {
+			if(traincount == 5) {
+				break;
+			}
+			System.out.println(trainresult);
+			if(trainresult.contains("Pass")) {
+				System.out.println("Pass");
+				success += 1;
+			}
+			traincount++;
+		}
+			fr.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		delFolderTxtFUNC.deltxt("C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\output.cache.egroup.json");
 		delFolderTxtFUNC.deltxt("C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\output.cache.egroup_copy.json");
 		delFolderTxtFUNC.deltxt("C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\photolist.egroupList");
-
-		return "訓練完畢";
+		if(success > 0) {
+			return "訓練成功";
+		} else {
+			return "訓練失敗";
+		}
+		
 	}
 
 	// 導到 /file Controller
