@@ -18,7 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.omg.CORBA.PUBLIC_MEMBER;import org.springframework.context.support.StaticApplicationContext;
+import org.omg.CORBA.PUBLIC_MEMBER;
+import org.springframework.context.support.StaticApplicationContext;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -35,14 +36,14 @@ import com.google.gson.reflect.TypeToken;
 
 @Controller
 public class BlackListShowFaces {
-	
+
 	Map<String, List<String>> resultmap = null;
 	boolean stopsignal = false;
-	
+
 	@GetMapping("/blacklist/return")
 	@ResponseBody
 	public Map<String, List<String>> blacklistreturn() {
-		
+
 		return resultmap;
 
 	}
@@ -63,7 +64,7 @@ public class BlackListShowFaces {
 		stopsignal = false;
 		List<Face> faceList = new ArrayList<>();
 		String cacheJsonName = "output.cache.egroup";
-		String headshotpath = "D:\\Git\\repository\\identiFace\\upload-dir\\";
+		String headshotpath = "C:\\Users\\Yan\\eclipse-workspace\\identiFace\\identiFace\\upload-dir\\";
 		JsonArray jo = null;
 		String faceListstring = "";
 		List<String> headshottime = new ArrayList<>();
@@ -79,8 +80,9 @@ public class BlackListShowFaces {
 			System.out.println("執行中");
 			System.out.println(jo.size());
 			int count = 0;
-			for (int i = jo.size() - 1; i >= 0; i--,count++) {
-				if(count >= 10) break;
+			for (int i = jo.size() - 1; i >= 0; i--, count++) {
+				if (count >= 10)
+					break;
 				int hasfound = 0;
 				JsonObject jsonobject = jo.get(i).getAsJsonObject();
 				hasfound = jsonobject.get("hasFound").getAsInt();
@@ -95,14 +97,16 @@ public class BlackListShowFaces {
 					if (!exist) {
 						Path sourcePath = Paths
 								.get("C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\headshot\\" + faceId + ".jpg");
-						Path destinationPath = Paths.get("D:\\Git\\repository\\identiFace\\upload-dir\\" + faceId + ".jpg");
+						Path destinationPath = Paths
+								.get("C:\\Users\\Yan\\eclipse-workspace\\identiFace\\identiFace\\upload-dir\\" + faceId
+										+ ".jpg");
 						try {
 							Files.copy(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
 						} catch (IOException e) {
 							// something else went wrong
 							e.printStackTrace();
 						}
-						headshottime.add(0, faceId+".jpg");
+						headshottime.add(0, faceId + ".jpg");
 						headshottime.add(1, time);
 						// 存到resultmap裡
 						resultmap.put(faceId, headshottime);
@@ -110,7 +114,7 @@ public class BlackListShowFaces {
 						// 修改時間
 						resultmap.get(faceId).set(1, time);
 					}
-					
+
 				}
 			}
 			try {
@@ -120,10 +124,10 @@ public class BlackListShowFaces {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 			for (Object key : resultmap.keySet()) {
-	            System.out.println(key + " : " + resultmap.get(key));
-	        }
+				System.out.println(key + " : " + resultmap.get(key));
+			}
 		}
 	}
 
