@@ -36,7 +36,6 @@ import java.util.stream.Collectors;
 
 import com.egroupai.engine.entity.TrainFace;
 import com.egroupai.engine.util.CmdUtil;
-import com.example.GetByFaceId;
 import com.example.entity.trainResult;
 import com.example.function.CreateTxtPath;
 import com.example.function.GetFileSize;
@@ -47,30 +46,32 @@ import com.example.FileUploadController;
 
 @Controller
 public class ReturnHeadshot {
-	//接收faceId，去大頭貼資料夾找對應的頭貼，將它移到server資料夾，讓前端秀出來
-	@RequestMapping(value = "/headshotreturn", method = RequestMethod.POST)
-	@ResponseBody
-	public String uploadingPost(@RequestParam("faceId") String faceId) throws Exception {
-		faceId += ".jpg";
+ // 接收faceId，去大頭貼資料夾找對應的頭貼，將它移到server資料夾，讓前端秀出來
+ @RequestMapping(value = "/headshotreturn", method = RequestMethod.POST)
+ @ResponseBody
+ @CrossOrigin
+ public String uploadingPost(@RequestBody String faceId) throws Exception {
+  faceId += ".jpg";
+  System.out.println("headshot api start");
+  Path sourcePath = Paths.get("C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\headshot\\" + faceId);
+  Path destinationPath = Paths
+    .get("D:\\Git\\repository\\identiFace\\upload-dir\\" + faceId);
 
-		Path sourcePath = Paths.get("C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\headshot\\" + faceId);
-		Path destinationPath = Paths.get("D:\\Git\\repository\\identiFace\\upload-dir\\" + faceId);
+  File headshot = new File("C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\headshot\\" + faceId);
+  if (headshot.exists()) {
+   System.out.println(faceId + "  大頭貼存在 !");
 
-		File headshot = new File("C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\headshot\\" + faceId);
-		if (headshot.exists()) {
-			System.out.println(faceId + "  大頭貼存在 !");
-
-			try {
-				Files.copy(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
-			} catch (FileAlreadyExistsException e) {
-				System.out.println("檔案已經存在");
-			} catch (IOException e) {
-				// something else went wrong
-				e.printStackTrace();
-			}
-			return faceId;
-		} else {
-			return "沒有大頭貼 !";
-		}
-	}
+   try {
+    Files.copy(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
+   } catch (FileAlreadyExistsException e) {
+    System.out.println("檔案已經存在");
+   } catch (IOException e) {
+    // something else went wrong
+    e.printStackTrace();
+   }
+   return faceId;
+  } else {
+   return "沒有大頭貼 !";
+  }
+ }
 }
