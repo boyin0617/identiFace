@@ -36,15 +36,22 @@ import com.google.gson.reflect.TypeToken;
 @Controller
 public class BlackListShowFaces {
 	
-	static Map<String, List<String>> resultmap = null;
+	Map<String, List<String>> resultmap = null;
+	boolean stopsignal = false;
 	
-	@CrossOrigin
 	@GetMapping("/blacklist/return")
 	@ResponseBody
 	public Map<String, List<String>> blacklistreturn() {
 		
 		return resultmap;
 
+	}
+	
+	@GetMapping("/blacklist/getresult/stop")
+	@ResponseBody
+	public void stopBlackListResult() {
+		
+		stopsignal = true;
 	}
 
 	static protected String ENGINEPATH = "C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN";
@@ -53,7 +60,7 @@ public class BlackListShowFaces {
 	@GetMapping("/blacklist/getresult")
 	@ResponseBody
 	public void getBlackListResult() {
-
+		stopsignal = false;
 		List<Face> faceList = new ArrayList<>();
 		String cacheJsonName = "output.cache.egroup";
 		String headshotpath = "D:\\Git\\repository\\identiFace\\upload-dir\\";
@@ -62,7 +69,7 @@ public class BlackListShowFaces {
 		List<String> headshottime = new ArrayList<>();
 		resultmap = new HashMap<>();
 		delFolderTxtFUNC.delAllFile("D:\\Git\\repository\\identiFace\\upload-dir\\");
-		while (true) {
+		while (!stopsignal) {
 			faceList = getCacheResult(ENGINEPATH, cacheJsonName);
 			faceListstring = new Gson().toJson(faceList);
 			Gson gson = new Gson();
