@@ -38,14 +38,9 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
-import com.example.dao.memberDAO;
 
 @Controller
 public class RetrieveController {
-	@Autowired
-	memberDAO memberDAO;
-	private static final String Date  = null;
-	
 	//取得結果(回傳辨識到的faceId 字串陣列)
 	@RequestMapping("/getresult")
 	@ResponseBody
