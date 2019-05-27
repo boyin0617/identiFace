@@ -80,7 +80,7 @@ public class RetrieveController {
 		retrieveFace.setResolution("720p");
 		retrieveFace.setOutputFacePath("outputFace");
 		retrieveFace.setOutputFramePath("outputFrame");
-		retrieveFace.setCam("0");
+		retrieveFace.setCam("1");
 		retrieveFace.setMinimumFaceSize(100);
 		retrieveFace.setThreshold(0.7);
 		retrieveFace.setTrainedBinaryPath("eGroup\\eGroup.Model.binary");
