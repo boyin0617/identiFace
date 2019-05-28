@@ -56,7 +56,7 @@ public class TrainController {
 	@GetMapping("/showfaces")
 	@ResponseBody
 	public List<List<String>> selecttenpic(){
-		delFolderTxtFUNC.delAllFile("D:\\Git\\repository\\identiFace\\upload-dir\\");
+		//delFolderTxtFUNC.delAllFile("D:\\Git\\repository\\identiFace\\upload-dir\\");
 		List<List<String>> resultlist = new ArrayList<>();
 		resultlist = getLastTen();
 		String path = "C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\outputface\\" ;

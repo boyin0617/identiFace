@@ -180,9 +180,9 @@ public class ReturnTrainController {
 		modelSwitch.setNewModelFaceInfoPath(folderPath + "\\eGroup\\eGroup.Model.faceInfor");
 		modelSwitch.setSwitchFilePath(folderPath + "\\Singal_For_Model_Switch.txt");
 		modelSwitch(modelSwitch);
-
+		
 		System.out.println("switchfinished");
-
+		delFolderTxtFUNC.delAllFile("D:\\Git\\repository\\identiFace\\upload-dir\\");
 		// delFolderTxtFUNC.delAllFile("D:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\face");
 		delFolderTxtFUNC.deltxt("C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\list.txt");
 //		try {
