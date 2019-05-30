@@ -3,6 +3,11 @@ package com.example;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -15,6 +20,7 @@ import java.util.Map;
 
 import javax.xml.crypto.Data;
 
+import org.omg.CosNaming.NamingContextExtPackage.StringNameHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.*;
 import org.springframework.web.bind.annotation.*;
@@ -41,33 +47,69 @@ import com.google.gson.reflect.TypeToken;
 
 @Controller
 public class RetrieveController {
-	//取得結果(回傳辨識到的faceId 字串陣列)
+	// 取得結果(回傳辨識到的faceId 字串陣列)
 	@RequestMapping("/getresult")
 	@ResponseBody
-	public List<String> home() throws SQLException {
-		
-		List<String> resultlist = GetResult.main();
+	public void home() throws SQLException {
 
-		return resultlist;
+		GetResult.main();
+
 	}
-	
-	//重新訓練(辨識到人，創資料夾，移照片到資料夾，) (未完成)
+
+	@RequestMapping("/getresult/cancel")
+	@ResponseBody
+	public void cancel() {
+
+		GetResult.cancelRun();
+		;
+
+	}
+
+	@RequestMapping("/getresult/return")
+	@ResponseBody
+	public String returnResult(){
+		
+		String faceId = GetResult.returnResult();
+		if(faceId == "") {
+			return "";
+		} else {
+		String picname = faceId+".jpg";
+		Path sourcePath = Paths.get("C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\headshot\\" + picname);
+		Path destinationPath = Paths.get("D:\\Git\\repository\\identiFace\\upload-dir\\" + picname);
+
+		File headshot = new File("C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\headshot\\" + picname);
+		if (!headshot.exists()) {
+		 System.out.println(picname + "  大頭貼不存在 !");
+		}
+		try {
+		  Files.copy(sourcePath, destinationPath, StandardCopyOption.REPLACE_EXISTING);
+		} catch (FileAlreadyExistsException e) {
+		    System.out.println("檔案已經存在");
+		  } catch (IOException e) {
+		    // something else went wrong
+		    e.printStackTrace();
+		  }
+		return faceId;
+		}
+	}
+
+	// 重新訓練(辨識到人，創資料夾，移照片到資料夾，) (未完成)
 	@PostMapping("/retrain")
 	@ResponseBody
 	public Map<String, List<String>> retrain(@ModelAttribute String faceId) throws SQLException {
-		
+
 		Map<String, List<String>> resultmap = GetResult.retrain();
-		
+
 		for (String key : resultmap.keySet()) {
-            
-        }
+
+		}
 		return resultmap;
 	}
-	
-	//開鏡頭
+
+	// 開鏡頭
 	@RequestMapping("/retrieveface")
 	public String RetrieveFace() {
-		
+
 		RetrieveFace retrieveFace = new RetrieveFace();
 		retrieveFace.setThreshold(0.7);
 		retrieveFace.setHideMainWindow(false);
@@ -82,89 +124,87 @@ public class RetrieveController {
 		retrieveFace.setTrainedFaceInfoPath("eGroup\\eGroup.Model.faceInfor");
 		retrieveFace.setJsonPath("output");
 		retrieveFace(retrieveFace);
-		return "redirect:/";		
+		return "redirect:/";
 	}
-	
-	 //關鏡頭
-	 @RequestMapping(value = "/retrieveface/terminate", method = RequestMethod.GET)
-	 @ResponseBody
-	  public void terminateEngine(){
-	   
-	   terminateRetrieveProcess("RetrieveFace.exe");
-	
-	  }
-	  // terminate
-	  protected static void terminateRetrieveProcess(String processName) {
-	   final TerminateUtil  terminate = new TerminateUtil();
-	   terminate.cmdProcessTerminate(processName);  
-	   System.out.println("Terminate process="+processName);
-	  }
-	
-	//前端輸入faceId，創faceId資料夾，開鏡頭，辨識的照片存在faceId資料夾
+
+	// 關鏡頭
+	@RequestMapping(value = "/retrieveface/terminate", method = RequestMethod.GET)
+	@ResponseBody
+	public void terminateEngine() {
+
+		terminateRetrieveProcess("RetrieveFace.exe");
+
+	}
+
+	// terminate
+	protected static void terminateRetrieveProcess(String processName) {
+		final TerminateUtil terminate = new TerminateUtil();
+		terminate.cmdProcessTerminate(processName);
+		System.out.println("Terminate process=" + processName);
+	}
+
+	// 前端輸入faceId，創faceId資料夾，開鏡頭，辨識的照片存在faceId資料夾
 	@PostMapping("/retrieveface/withfaceId")
 	public String RetrieveFace(@ModelAttribute("faceid") String faceId) throws ClassNotFoundException, SQLException {
-		 String ENGINEPATH = "C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN";	 
-		 
-			// 取得Real-time結果
-			List<Face> faceList = new ArrayList<>();
-			String cacheJsonName = "output.cache.egroup";
-			final Type faceListType = new TypeToken<ArrayList<Face>>() {}.getType();
-			ArrayList<String> getfacelist = new ArrayList<>();
-			int hasfound = 0;
-			JsonArray jo = null;
-			String faceListstring = "";
-			
-			
-			
-				while (true) {
-					long startTime = System.currentTimeMillis();
-					faceList = GetResult.getCacheResult(ENGINEPATH, cacheJsonName);
-					faceListstring = new Gson().toJson(faceList);
-					Gson gson = new Gson();
-					String name = "";
+		String ENGINEPATH = "C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN";
 
-					jo = gson.fromJson(faceListstring, JsonArray.class);
-					for (int i = 0; i < jo.size(); i++) {
-						JsonObject jsonobject = jo.get(i).getAsJsonObject();
-						hasfound = jsonobject.get("hasFound").getAsInt();
-						System.out.println(hasfound);
-						if (hasfound == 1) {
-							name = jsonobject.get("personId").getAsString();
-								System.out.println("當下辨識到"+name);
-							}
-						else {
-							System.out.println("新用戶 即將創folder");
-							boolean successful = GenerateFolder.mkDirectory("D:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\" + faceId);
-							System.out.println("新用戶 即將創folder"+ successful);
-							
-						}
-						}
-					try {
-						// 調速度的
-						Thread.sleep(500);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				 
-	  RetrieveFace retrieveFace = new RetrieveFace();
-	  retrieveFace.setThreshold(0.7);
-	  retrieveFace.setHideMainWindow(false);
-	  retrieveFace.setShowThreadWindow(true);
-	  retrieveFace.setResolution("720p");
-	  retrieveFace.setOutputFacePath(faceId);
-	  retrieveFace.setOutputFramePath("outputFrame");
-	  retrieveFace.setCam("0");
-	  retrieveFace.setMinimumFaceSize(100);
-	  retrieveFace.setThreshold(0.7);
-	  retrieveFace.setTrainedBinaryPath("eGroup\\eGroup.Model.binary");
-	  retrieveFace.setTrainedFaceInfoPath("eGroup\\eGroup.Model.faceInfor");
-	  retrieveFace.setJsonPath("output");
-	  retrieveFace(retrieveFace);
-	 
-			
-		return "autoupload";
-	 }
-	 }
+		// 取得Real-time結果
+		List<Face> faceList = new ArrayList<>();
+		String cacheJsonName = "output.cache.egroup";
+		final Type faceListType = new TypeToken<ArrayList<Face>>() {
+		}.getType();
+		ArrayList<String> getfacelist = new ArrayList<>();
+		int hasfound = 0;
+		JsonArray jo = null;
+		String faceListstring = "";
+
+		while (true) {
+			long startTime = System.currentTimeMillis();
+			faceList = GetResult.getCacheResult(ENGINEPATH, cacheJsonName);
+			faceListstring = new Gson().toJson(faceList);
+			Gson gson = new Gson();
+			String name = "";
+
+			jo = gson.fromJson(faceListstring, JsonArray.class);
+			for (int i = 0; i < jo.size(); i++) {
+				JsonObject jsonobject = jo.get(i).getAsJsonObject();
+				hasfound = jsonobject.get("hasFound").getAsInt();
+				System.out.println(hasfound);
+				if (hasfound == 1) {
+					name = jsonobject.get("personId").getAsString();
+					System.out.println("當下辨識到" + name);
+				} else {
+					System.out.println("新用戶 即將創folder");
+					boolean successful = GenerateFolder.mkDirectory("D:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\" + faceId);
+					System.out.println("新用戶 即將創folder" + successful);
+
+				}
+			}
+			try {
+				// 調速度的
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
+			RetrieveFace retrieveFace = new RetrieveFace();
+			retrieveFace.setThreshold(0.7);
+			retrieveFace.setHideMainWindow(false);
+			retrieveFace.setShowThreadWindow(true);
+			retrieveFace.setResolution("720p");
+			retrieveFace.setOutputFacePath(faceId);
+			retrieveFace.setOutputFramePath("outputFrame");
+			retrieveFace.setCam("0");
+			retrieveFace.setMinimumFaceSize(100);
+			retrieveFace.setThreshold(0.7);
+			retrieveFace.setTrainedBinaryPath("eGroup\\eGroup.Model.binary");
+			retrieveFace.setTrainedFaceInfoPath("eGroup\\eGroup.Model.faceInfor");
+			retrieveFace.setJsonPath("output");
+			retrieveFace(retrieveFace);
+
+			return "autoupload";
+		}
+	}
 
 	private static boolean retrieveFace(RetrieveFace retrieveFace) {
 		boolean flag = false;
@@ -178,4 +218,3 @@ public class RetrieveController {
 	}
 
 }
-	

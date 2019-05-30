@@ -44,11 +44,19 @@ import java.sql.*;
  * @description:
  */
 public class GetResult {
+	static String faceId = "";
+	static boolean run = true;
 	static protected String ENGINEPATH = "C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN";
-
+	public static String returnResult() {
+		System.out.println(faceId);
+		return faceId;	
+	}
+	public static void cancelRun() {
+		run = false;
+	}
 	// 一般抓結果
-	public static List<String> main(){
-
+	public static void main(){
+		run = true;
 		List<Face> faceList = new ArrayList<>();
 		String cacheJsonName = "output.cache.egroup";
 		final Type faceListType = new TypeToken<ArrayList<Face>>() {
@@ -58,8 +66,9 @@ public class GetResult {
 		JsonArray jo = null;
 		String faceListstring = "";
 		int count = 0;
-
-		while (count < 5) {
+		System.out.println("取得結果");
+		faceId = "";
+		while (run) {
 			long startTime = System.currentTimeMillis();
 			faceList = getCacheResult(ENGINEPATH, cacheJsonName);
 //			System.out.println("Get Json Using Time:" + (System.currentTimeMillis() - startTime) + " ms,faceList="
@@ -68,16 +77,21 @@ public class GetResult {
 			// 100 ms
 			faceListstring = new Gson().toJson(faceList);
 			Gson gson = new Gson();
-			String faceId = "";
 			jo = gson.fromJson(faceListstring, JsonArray.class);
 			for (int i = jo.size() - 1; i >= 0; i--) {
+				count++;
 				JsonObject jsonobject = jo.get(i).getAsJsonObject();
 				hasfound = jsonobject.get("hasFound").getAsInt();
 				if (hasfound == 1) {
 					faceId = jsonobject.get("personId").getAsString();
 					System.out.println("辨識到faceId :" + faceId);
-					if (!reclist.contains(faceId))
-						reclist.add(faceId);
+//					if (!reclist.contains(faceId))
+//						reclist.add(faceId);
+				} else {
+					faceId="";
+				}
+				if(count >= 10) {
+					break;
 				}
 			}
 			try {
@@ -87,9 +101,8 @@ public class GetResult {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			count++;
+	
 		}
-		return reclist;
 	}
 
 	// 重新訓練用的(讀結果，複製照片到...資料夾)
