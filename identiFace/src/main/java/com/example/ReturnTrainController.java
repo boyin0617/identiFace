@@ -175,13 +175,14 @@ public class ReturnTrainController {
 		trainFace.setModelPath("eGroup\\eGroup.Model");
 		trainFace(trainFace);
 
-		ModelSwitch modelSwitch = new ModelSwitch();
-		modelSwitch.setNewModelBinaryPath(folderPath + "\\eGroup\\eGroup.Model.binary");
-		modelSwitch.setNewModelFaceInfoPath(folderPath + "\\eGroup\\eGroup.Model.faceInfor");
-		modelSwitch.setSwitchFilePath(folderPath + "\\Singal_For_Model_Switch.txt");
-		modelSwitch(modelSwitch);
-		
+//		ModelSwitch modelSwitch = new ModelSwitch();
+//		modelSwitch.setNewModelBinaryPath(ENGINEPATH+"/eGroup/eGroup.Model.binary");
+//		modelSwitch.setNewModelFaceInfoPath(ENGINEPATH+"/eGroup/eGroup.Model.faceInfor");
+//		modelSwitch.setSwitchFilePath(ENGINEPATH+"/Singal_For_Model_Switch.txt");
+//		modelSwitch(modelSwitch);
 		System.out.println("switchfinished");
+		
+		
 		delFolderTxtFUNC.delAllFile("D:\\Git\\repository\\identiFace\\upload-dir\\");
 		// delFolderTxtFUNC.delAllFile("D:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\face");
 		delFolderTxtFUNC.deltxt("C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\list.txt");
@@ -221,12 +222,12 @@ public class ReturnTrainController {
 		delFolderTxtFUNC.deltxt("C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\output.cache.egroup.json");
 		delFolderTxtFUNC.deltxt("C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\output.cache.egroup_copy.json");
 		delFolderTxtFUNC.deltxt("C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\photolist.egroupList");
+		delFolderTxtFUNC.deltxt("C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN\\Log.TrainResultCPU.eGroup");
 		if(success > 0) {
 			return "訓練成功";
 		} else {
 			return "訓練失敗";
 		}
-		
 	}
 
 	// 導到 /file Controller

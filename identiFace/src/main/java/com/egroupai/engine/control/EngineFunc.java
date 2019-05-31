@@ -34,45 +34,45 @@ public class EngineFunc{
 		String  binarypath = "";
 		String  faceInforpath = "";
 		
-		try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
-			System.out.println("加载数据库驱动成功");
-//			String url="jdbc:mysql://localhost:3306/project?autoReconnect=true&useSSL=false&serverTimezone=UTC";//声明数据库project的url  
-			String url="jdbc:mysql://140.136.155.124/identiFace?autoReconnect=true&useSSL=false&serverTimezone=UTC";
-			String user="root";//数据库账号  
-			String pass = "Faceidenti";
-//			String pass="a8s5d1f9";//数据库密码
-			//建立数据库连接，获得连接对象conn  
-			Connection connect=DriverManager.getConnection(url,user,pass);
-			System.out.println("数据库连接成功");
-			Statement stmt = connect.createStatement();
-			ResultSet rs = stmt.executeQuery("select * from face WHERE imageId = 0");
-			while (rs.next()) {
-				binarypath = rs.getString("binary_path");
-				faceInforpath = rs.getString("faceInfor_path");
-				}
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			System.out.print("get data error!");
-			e.printStackTrace();
-		}
-		
+//		try {
+//			Class.forName("com.mysql.cj.jdbc.Driver");
+//			System.out.println("加载数据库驱动成功");
+////			String url="jdbc:mysql://localhost:3306/project?autoReconnect=true&useSSL=false&serverTimezone=UTC";//声明数据库project的url  
+//			String url="jdbc:mysql://140.136.155.124/identiFace?autoReconnect=true&useSSL=false&serverTimezone=UTC";
+//			String user="root";//数据库账号  
+//			String pass = "Faceidenti";
+////			String pass="a8s5d1f9";//数据库密码
+//			//建立数据库连接，获得连接对象conn  
+//			Connection connect=DriverManager.getConnection(url,user,pass);
+//			System.out.println("数据库连接成功");
+//			Statement stmt = connect.createStatement();
+//			ResultSet rs = stmt.executeQuery("select * from face WHERE imageId = 0");
+//			while (rs.next()) {
+//				binarypath = rs.getString("binary_path");
+//				faceInforpath = rs.getString("faceInfor_path");
+//				}
+//		} catch (ClassNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			System.out.print("get data error!");
+//			e.printStackTrace();
+//		}
+//		
 		
 		// RetrieveFace
-		RetrieveFace retrieveFace = new RetrieveFace();
-		retrieveFace.setThreshold(0.7);
-		retrieveFace.setHideMainWindow(false);
-		retrieveFace.setShowThreadWindow(true);
-		retrieveFace.setResolution("720p");
-		retrieveFace.setOutputFacePath("outputFace1");
-		retrieveFace.setOutputFramePath("outputFrame1");
-		retrieveFace.setCam("1");
-		retrieveFace.setMinimumFaceSize(100);
-		retrieveFace.setThreshold(0.7);
-		retrieveFace.setTrainedBinaryPath(binarypath);
-		retrieveFace.setTrainedFaceInfoPath(faceInforpath);
-		retrieveFace.setJsonPath("output");
-		retrieveFace(retrieveFace);
+//		RetrieveFace retrieveFace = new RetrieveFace();
+//		retrieveFace.setThreshold(0.7);
+//		retrieveFace.setHideMainWindow(false);
+//		retrieveFace.setShowThreadWindow(true);
+//		retrieveFace.setResolution("720p");
+//		retrieveFace.setOutputFacePath("outputFace1");
+//		retrieveFace.setOutputFramePath("outputFrame1");
+//		retrieveFace.setCam("1");
+//		retrieveFace.setMinimumFaceSize(100);
+//		retrieveFace.setThreshold(0.7);
+//		retrieveFace.setTrainedBinaryPath(binarypath);
+//		retrieveFace.setTrainedFaceInfoPath(faceInforpath);
+//		retrieveFace.setJsonPath("output");
+//		retrieveFace(retrieveFace);
 		
 //讀取json檔(日期為當天日期)
 //		Date date = new Date();
@@ -114,11 +114,12 @@ public class EngineFunc{
 //		modelMerge(modelMerge);
 		
 //		// ModelSwitch
-//		ModelSwitch modelSwitch = new ModelSwitch();
-//		modelSwitch.setNewModelBinaryPath(ENGINEPATH+"/eGroup5/eGroup.Model.binary");
-//		modelSwitch.setNewModelFaceInfoPath(ENGINEPATH+"/eGroup5/eGroup.Model.faceInfor");
-//		modelSwitch.setSwitchFilePath(ENGINEPATH+"/Singal_For_Model_Switch.txt");
-//		modelSwitch(modelSwitch);
+		ModelSwitch modelSwitch = new ModelSwitch();
+		modelSwitch.setNewModelBinaryPath(ENGINEPATH+"/eGroup/eGroup.Model.binary");
+		modelSwitch.setNewModelFaceInfoPath(ENGINEPATH+"/eGroup/eGroup.Model.faceInfor");
+		modelSwitch.setSwitchFilePath(ENGINEPATH+"/Singal_For_Model_Switch.txt");
+		modelSwitch(modelSwitch);
+		System.out.println("Switch");
 	}
 		
 	private static boolean trainFace(TrainFace trainFace){		
