@@ -51,7 +51,6 @@ public class RetrieveController {
 	@RequestMapping("/getresult")
 	@ResponseBody
 	public void home() throws SQLException {
-
 		GetResult.main();
 
 	}
@@ -61,8 +60,6 @@ public class RetrieveController {
 	public void cancel() {
 
 		GetResult.cancelRun();
-		;
-
 	}
 
 	@RequestMapping("/getresult/return")
@@ -70,6 +67,7 @@ public class RetrieveController {
 	public String returnResult(){
 		
 		String faceId = GetResult.returnResult();
+		System.out.println("Run Return,辨識到"+faceId);
 		if(faceId == "") {
 			return "";
 		} else {
@@ -117,7 +115,7 @@ public class RetrieveController {
 		retrieveFace.setResolution("720p");
 		retrieveFace.setOutputFacePath("outputFace");
 		retrieveFace.setOutputFramePath("outputFrame");
-		retrieveFace.setCam("1");
+		retrieveFace.setCam("0");
 		retrieveFace.setMinimumFaceSize(100);
 		retrieveFace.setThreshold(0.7);
 		retrieveFace.setTrainedBinaryPath("eGroup\\eGroup.Model.binary");

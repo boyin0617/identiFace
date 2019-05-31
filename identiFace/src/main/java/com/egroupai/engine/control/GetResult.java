@@ -26,6 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.egroupai.engine.entity.Face;
 import com.egroupai.engine.util.CopyUtil;
 import com.example.function.GenerateFolder;
+import com.example.function.delFolderTxtFUNC;
 import com.example.entity.Member;
 import com.example.entity.MemberRec;
 import com.google.gson.Gson;
@@ -47,12 +48,15 @@ public class GetResult {
 	static String faceId = "";
 	static boolean run = true;
 	static protected String ENGINEPATH = "C:\\eGroupAI_FaceEngine_CPU_V3.1.3_SN";
+	
 	public static String returnResult() {
 		System.out.println(faceId);
 		return faceId;	
 	}
+	
 	public static void cancelRun() {
 		run = false;
+		
 	}
 	// 一般抓結果
 	public static void main(){
@@ -78,6 +82,9 @@ public class GetResult {
 			faceListstring = new Gson().toJson(faceList);
 			Gson gson = new Gson();
 			jo = gson.fromJson(faceListstring, JsonArray.class);
+			if(jo.size()==0) {
+				continue;
+			}
 			for (int i = jo.size() - 1; i >= 0; i--) {
 				count++;
 				JsonObject jsonobject = jo.get(i).getAsJsonObject();
@@ -90,7 +97,7 @@ public class GetResult {
 				} else {
 					faceId="";
 				}
-				if(count >= 10) {
+				if(count >= 3) {
 					break;
 				}
 			}
